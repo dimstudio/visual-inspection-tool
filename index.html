@@ -1,0 +1,306 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Visual Inspection Tool</title>
+    <meta name="description" content="${2}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="css/normalize.min.css">
+    <script src="js/modernizr.min.js"></script>
+    <script src="js/plotly-latest.min.js"></script>
+    <script src="js/jquery-1.12.4.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.12.4.min.js"><\/script>')</script>
+    <link href="css/c3.css" rel="stylesheet">
+    <script src="js/d3.js"></script>
+    <script src="js/c3.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+		<script src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/jszip.min.js"></script>
+		<script type="text/javascript" src="js/jszip-utils.min.js"></script>
+		<link rel="stylesheet" href="css/jquery.tree-multiselect.css">
+		<script type="text/javascript" src="js/jquery.tree-multiselect.js"></script>
+		<!--[if IE]>
+		<script type="text/javascript" src="js/jszip-utils-ie.min.js"></script>
+		<![endif]-->
+		
+    <style>
+		.c3-region.rated {fill: red;}
+		.c3-xgrid-line.currentTime line {
+		    stroke: red;
+		    stroke-width:2
+		}
+	</style>
+</head>
+<body>
+	<div class="row">
+		<div class="col-sm-12"><h2 style="padding-left:20px">Visual Inspection tool</h2></div>
+	</div>
+	<div class="row">
+	  <div class="col-sm-6" id="secondDiv" style="padding-left:40px">
+	  	
+	  	<form style="margin: 0 40px;">
+		  <div class="form-group row">
+		  	<h4>Select session file:</h4>
+		    <label for="staticEmail" class="col-sm-2 col-form-label">Select file (.zip)</label>
+		    <div class="col-sm-10">
+		      <input type="file" id="theFile"  class="custom-file-input" placeholder="session.zip">
+		    </div>
+			</div>
+			<div class="form-group row">
+				<div class="col-sm-12" id="theFileList">
+					
+				</div>
+			</div>
+		  <div class="form-group row">
+		  	<h4>Annotation:</h4>
+		    <label for="selectPreset" class="col-sm-2 col-form-label">Annotation presets</label>
+		    <div class="col-sm-10">
+		      	<select class="form-control form-control-lg">
+				  <option>Expertise level sampling</option>
+				  <option>Flow level sampling</option>
+				  <option>etc</option>
+				</select>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <label for="response" class="col-sm-2 col-form-label">Interval selected</label>
+		    <div class="col-sm-10">
+		      <input type="text" readonly class="form-control" id="interval">
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		  	<button type="button" id="addAnnotation" class="btn btn-primary right">Add annotation</button>
+		  </div>
+		</form>
+	  </div>	
+	  <div class="col-sm-6">
+	  	<video id="theVideo" style="width:100%;" controls></video>
+		<div id="currentTime"></div>
+	  </div>
+	</div>
+	<div class="row">
+		<div class="col-sm-2" id="attrTree">
+				<ol id='attrTreeSelect' data-name='foo'>
+				</ol>
+		</div>
+	  <div class="col-sm-10" id="plotsContainer" style="min-height: 400px;">
+			<div id="plotGraph"></div>
+		</div>
+	</div>	
+</body>
+<script>
+ 
+	// Load Files from zip session file
+	var $result = $("#theFileList");
+	$("#theFile").on("change", function (evt) {
+		// remove content
+		$result.html("");
+		// be sure to show the results
+		$("#result_block").removeClass("hidden").addClass("show");
+
+		// Closure to capture the file information.
+		var appCounter = 0;	
+		// populate the AttributeList
+		function handleFile(f) {
+			var $title = $("<strong>", {
+				text: f.name
+			});
+			var $fileContent = $("<ul>");
+			$result.append($title);
+			$result.append($fileContent);
+			
+			var dateBefore = new Date();
+			JSZip.loadAsync(f).then(function (zip) {
+					var dateAfter = new Date();
+					$title.append($("</strong><span>", {
+						"class": "small",
+						text: " (loaded in " + (dateAfter - dateBefore) + "ms)"
+					}));
+
+					zip.forEach(function (relativePath, zipEntry) {  // 2) print entries
+						$fileContent.append($("<li>", {
+							text: zipEntry.name
+						}));
+						
+						// Load the .mp4 file into the player
+						if (zipEntry.name.includes(".mp4")) {	
+							zipEntry.async("blob").then(function (content) { 
+								var binaryVideo = [];
+								binaryVideo.push(content);
+								$("video").attr("src", window.URL.createObjectURL(new Blob(binaryVideo))); 
+							});
+						}
+
+						// Load the .webm file into the player
+						if (zipEntry.name.includes(".webm")) {
+							zipEntry.async("blob").then(function (content) {
+								var binaryVideo = [];
+								binaryVideo.push(content);
+								$("video").attr("src", window.URL.createObjectURL(new Blob(binaryVideo)));
+							});
+						}
+
+						// Load the .JSON file into the plot
+						if (zipEntry.name.includes(".json")) {
+							zipEntry.async("text").then(function (content) {
+								appCounter = appCounter + 1;
+								addToAttrList(content, appCounter);
+								generatePlot();
+							});
+						}
+					
+						
+
+					});
+				}, function (e) {
+					$result.append($("<div>", {
+						"class": "alert alert-danger",
+						text: "Error reading " + f.name + ": " + e.message
+					}));
+				});	
+		}
+		var files = evt.target.files;
+		for (var i = 0; i < files.length; i++) {
+			handleFile(files[i]);
+		}
+	});
+
+	// ATTRIBUTE LIST
+	var tree = $("#attrTreeSelect").treeMultiselect({
+			allowBatchSelection: true,
+			onChange: treeOnChange,
+			startCollapsed: false,
+			hideSidePanel: true
+	});
+	function treeOnChange(allSelectedItems, addedItems, removedItems) {
+		console.log("something changed!");
+	}
+		
+
+	var attrList = {};
+	function addToAttrList (json_flat, appCounter) {
+		
+		json_object = JSON.parse(json_flat);		
+		var applicationName = json_object.applicationName;
+		for (i in json_object.frames) {
+			for (j in json_object.frames[i].frameAttributes) {
+				if (!(j in attrList)) {
+					attrList[j] = {};
+				}
+				attrList[j][json_object.frames[i].frameStamp.substring(6,12)] = json_object.frames[i].frameAttributes[j];
+			}	
+		}
+		for (i in Object.keys(attrList)){
+			
+			$("#attrTreeSelect").append("<li></li>")
+					.attr("value", Object.keys(attrList)[i])
+					.attr("data-section",applicationName)
+				  .attr("selected","selected")
+					.text(Object.keys(attrList)[i]);
+		}
+		tree[0].reload();
+	}
+	// generatePlot (out of the AttributeList)
+	function generatePlot() {
+		if (typeof attrList != "undefined" && Object.keys(attrList).length>0){		
+			var xs = {};
+			var columns = [];
+			var regions = [];
+			var keyMax = 0;
+			for (attr in attrList) {
+				cols = $.map(attrList[attr], function (value, key) { return value });
+				cols.unshift(attr);
+				rows = $.map(attrList[attr], function (value, key) { return String(key)});
+			
+				max = rows[rows.length - 1];
+				if (max > keyMax) {
+					keyMax = max;
+				}
+				rows.unshift(attr + '_x');
+				
+				columns.push(cols);
+				columns.push(rows);
+				xs[attr] = attr + '_x';
+			}
+			
+			// Create the xAxis Ticks index
+			
+			var xAxisTicks = [];
+			var xscale = 5;
+			if (keyMax > 0) {
+				q = Math.floor(keyMax / xscale);
+				for (i = 0; i <= (q * xscale); i = i + xscale) {
+					xAxisTicks.push(i);
+				}
+
+			}
+			// GENERATE CHART
+			var chart = c3.generate({
+				bindto: '#plotGraph',
+				data: {
+					xs: xs,
+					xFormat: '%S.%L',
+					columns: columns,
+					onclick: function (id) {
+						document.getElementById("theVideo").currentTime = id.x;
+					}
+				},
+				subchart: {
+					show: true,
+					onbrush: function (domain) {
+						$('#interval').val(domain[0].toFixed(3) + ', ' + domain[1].toFixed(3));
+					}
+				},
+				legend: {
+					position: 'right'
+				},
+				grid: {
+					x: {show: true},
+					y: {show: true}
+				},
+				zoom: {
+					enabled: false,
+					onzoom: function (domain) {
+						$('#interval').val(domain[0].toFixed(3) + ', ' + domain[1].toFixed(3));
+					}
+				},
+				axis: {
+					x: {
+						tick: {
+							values: xAxisTicks
+						},
+						label: "Time (s)"
+					}
+				},
+				size: {
+					height: 500
+				},
+				padding:{
+					top:20
+				}
+
+			});
+
+			$("#addAnnotation").click(function () {
+				var arr = $("#interval").val().split(','),
+					begin = arr[0], stop = arr[1];
+				regions.push({ axis: 'x', start: begin, end: stop, class: 'rated' });
+				chart.regions(regions);
+			});
+
+			$("#theVideo").on("timeupdate",
+				function (event) {
+					chart.xgrids([{
+						value: this.currentTime,
+						class: 'currentTime'
+					}]);
+
+				});
+			
+		}
+	}
+
+  </script>
+</html>
