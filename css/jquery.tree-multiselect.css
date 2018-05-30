@@ -12,7 +12,7 @@ div.tree-multiselect {
     overflow: auto;
     padding: 1%;
     vertical-align: top;
-    width: 50%; }
+    width: 100%; }
   div.tree-multiselect > div.selections {
     border-right: solid 2px #D8D8D8; }
     div.tree-multiselect > div.selections div.item {

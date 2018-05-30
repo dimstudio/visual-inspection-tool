@@ -6,24 +6,26 @@
     <title>Visual Inspection Tool</title>
     <meta name="description" content="${2}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="stylesheet" href="css/normalize.min.css">
+    <link rel="shortcut icon" type="image/png" href="css/favicon.ico"/>
     <script src="js/modernizr.min.js"></script>
     <script src="js/plotly-latest.min.js"></script>
     <script src="js/jquery-1.12.4.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
     <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.12.4.min.js"><\/script>')</script>
     <link href="css/c3.css" rel="stylesheet">
     <script src="js/d3.js"></script>
     <script src="js/c3.js"></script>
     <link rel="stylesheet" href="css/bootstrap.min.css">
-		<script src="js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="js/jszip.min.js"></script>
-		<script type="text/javascript" src="js/jszip-utils.min.js"></script>
-		<link rel="stylesheet" href="css/jquery.tree-multiselect.css">
-		<script type="text/javascript" src="js/jquery.tree-multiselect.js"></script>
-		<!--[if IE]>
+	<script src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/jszip.min.js"></script>
+	<script type="text/javascript" src="js/moment.js"></script>
+	<script type="text/javascript" src="js/jszip-utils.min.js"></script>
+	<link rel="stylesheet" href="css/jquery.tree-multiselect.css">
+	<script type="text/javascript" src="js/jquery.tree-multiselect.min.js"></script>
+	<!--[if IE]>
 		<script type="text/javascript" src="js/jszip-utils-ie.min.js"></script>
-		<![endif]-->
+	<![endif]-->
 		
     <style>
 		.c3-region.rated {fill: red;}
@@ -31,72 +33,119 @@
 		    stroke: red;
 		    stroke-width:2
 		}
+		div.tree-multiselect > div.selections {width: 100%}
+		#attrTree {padding-right: 0;}
+		#plotsContainer {padding-left: 0;}
+		div.tree-multiselect > div.selections.no-border {max-height: 500px; overflow-y: scroll;}
+		#wrapper {padding: 0 40px 0 20px;}
+		div.section > div.section, div.tree-multiselect div.section > div.item {padding-left: 5px;}
+		.smallInput {width:18%; float: left; margin-right:5px;}
+		div.tree-multiselect { border: 0px;}
 	</style>
 </head>
 <body>
-	<div class="row">
-		<div class="col-sm-12"><h2 style="padding-left:20px">Visual Inspection tool</h2></div>
+<div id="wrapper">
+
+	<div class="row" style="padding-left:20px;"	>
+	  <h3>Visual Inspection tool <small>Multimodal data dasbhoard</small></h3>
 	</div>
 	<div class="row">
-	  <div class="col-sm-6" id="secondDiv" style="padding-left:40px">
-	  	
-	  	<form style="margin: 0 40px;">
-		  <div class="form-group row">
-		  	<h4>Select session file:</h4>
-		    <label for="staticEmail" class="col-sm-2 col-form-label">Select file (.zip)</label>
-		    <div class="col-sm-10">
-		      <input type="file" id="theFile"  class="custom-file-input" placeholder="session.zip">
-		    </div>
-			</div>
-			<div class="form-group row">
-				<div class="col-sm-12" id="theFileList">
-					
+	  	<div class="col-sm-6" id="secondDiv">
+		  	<div class="panel panel-default">
+		  		<div class="panel-heading panel-footer">
+				    <h3 class="panel-title ">Session loader <small>use .zip files</small></h3>
+				</div>
+			  	<div class="panel-body">	
+				  	<form>
+					  	<div class="row">
+						    <div class="col-sm-6" >
+						      <input type="file" id="theFile"  class="custom-file-input"> 
+						    </div>
+							<div id="theFileList" class="col-sm-6"></div>
+							
+						</div>
+					</form>
 				</div>
 			</div>
-		  <div class="form-group row">
-		  	<h4>Annotation:</h4>
-		    <label for="selectPreset" class="col-sm-2 col-form-label">Annotation presets</label>
-		    <div class="col-sm-10">
-		      	<select class="form-control form-control-lg">
-				  <option>Expertise level sampling</option>
-				  <option>Flow level sampling</option>
-				  <option>etc</option>
-				</select>
-		    </div>
-		  </div>
-		  <div class="form-group row">
-		    <label for="response" class="col-sm-2 col-form-label">Interval selected</label>
-		    <div class="col-sm-10">
-		      <input type="text" readonly class="form-control" id="interval">
-		    </div>
-		  </div>
-		  <div class="form-group row">
-		  	<button type="button" id="addAnnotation" class="btn btn-primary right">Add annotation</button>
-		  </div>
-		</form>
-	  </div>	
-	  <div class="col-sm-6">
-	  	<video id="theVideo" style="width:100%;" controls></video>
-		<div id="currentTime"></div>
-	  </div>
-	</div>
-	<div class="row">
-		<div class="col-sm-2" id="attrTree">
-				<ol id='attrTreeSelect' data-name='foo'>
-				</ol>
+			<div class="panel panel-default">
+				<div class="panel-heading panel-footer">
+				    <h3 class="panel-title ">Annotation editor <small>Experience API generator</small></h3>
+				</div>
+				<div class="panel-body">	
+				  	<form>
+				  		<div class="form-group row">
+						    <div class="col-sm-4">
+						      <input type="text" readonly class="form-control" id="interval" placeholder="Zoom into the plot legend">
+						    </div>
+						    <div class="col-sm-8">
+						      <button type="button" id="addTimeframe" class="btn btn-primary">Add timeframe</button>
+						      <button type="button" class="btn btn-danger">Delete</button>
+						    </div>
+						</div>
+					  	<div class="form-group row">
+				  			<div class="col-sm-12">
+				  				<input type="text" class="form-control smallInput" id="inputTimestamp" placeholder="Time" required>
+						      	<input type="text" class="form-control smallInput" id="inputActor" placeholder="Actor" style="" required>
+						      	<input type="text" class="form-control smallInput" id="inputVerb" placeholder="Verb" required>
+						      	<input type="text" class="form-control smallInput" id="inputObject" placeholder="Object" required>
+						    	<input type="text" class="form-control smallInput" id="inputResult" placeholder="Result" required>
+						    </div>
+				  		</div>
+
+						<div class="form-group row">
+				  			<div class="col-sm-12" id="xAPIForm">
+						      	<input type="text" class="form-control smallInput" id="inputAuthority" placeholder="Authority">
+						      	<button type="button" id="exportXAPI" class="btn btn-primary right">Export xAPI</button>
+						      	<a href="" download="xAPIlist.json" id="downloadJSON"></a>
+						    </div>
+				  		</div>				  		
+				  		<div class="row">
+					  		<select id="timeframeList"></select>
+					  	</div>
+				  	</form>
+				</div>
+			</div>
 		</div>
-	  <div class="col-sm-10" id="plotsContainer" style="min-height: 400px;">
-			<div id="plotGraph"></div>
+		<div class="col-sm-6" id="theVideo">
 		</div>
 	</div>	
+	<div class="row">	
+		<div class="col-sm-2" id="attrTree">
+			<select id="attrTreeSelect" multiple="multiple"></select>
+		</div>
+	  	<div class="col-sm-10" id="plotsContainer" style="min-height: 400px;">
+			<div id="plotGraph"></div>
+		</div>
+	</div>
+</div>	
 </body>
 <script>
  
 	// Load Files from zip session file
 	var $result = $("#theFileList");
+	var $video;
+	var attrDict; 
+	var regions;
+
 	$("#theFile").on("change", function (evt) {
 		// remove content
 		$result.html("");
+		attrDict = {};
+		$("#interval").val("");
+		$("#timeframeList").find('option').remove();
+		timeframeList.reload();
+		$('#attrTreeSelect').find('option').remove();
+		treeAttributes.reload();
+		treeOnChange();
+		$("a#downloadJSON").html("").attr("href","");
+		$("#theVideo video").remove();
+		$("#theVideo").html("<video style='width:100%;' controls=''></video>");
+		$video = $("#theVideo video");
+		regions = [];
+
+		//$video.first();
+
+
 		// be sure to show the results
 		$("#result_block").removeClass("hidden").addClass("show");
 
@@ -110,9 +159,11 @@
 			var $fileContent = $("<ul>");
 			$result.append($title);
 			$result.append($fileContent);
+
 			
 			var dateBefore = new Date();
 			JSZip.loadAsync(f).then(function (zip) {
+					attrDict = {};
 					var dateAfter = new Date();
 					$title.append($("</strong><span>", {
 						"class": "small",
@@ -120,7 +171,7 @@
 					}));
 
 					zip.forEach(function (relativePath, zipEntry) {  // 2) print entries
-						$fileContent.append($("<li>", {
+						$fileContent.append($("<link>", {
 							text: zipEntry.name
 						}));
 						
@@ -129,16 +180,10 @@
 							zipEntry.async("blob").then(function (content) { 
 								var binaryVideo = [];
 								binaryVideo.push(content);
-								$("video").attr("src", window.URL.createObjectURL(new Blob(binaryVideo))); 
-							});
-						}
-
-						// Load the .webm file into the player
-						if (zipEntry.name.includes(".webm")) {
-							zipEntry.async("blob").then(function (content) {
-								var binaryVideo = [];
-								binaryVideo.push(content);
-								$("video").attr("src", window.URL.createObjectURL(new Blob(binaryVideo)));
+								var source = document.createElement('source');
+							    source.src = window.URL.createObjectURL(new Blob(binaryVideo));
+							    source.type = "video/mp4";
+							    $video.append(source);
 							});
 						}
 
@@ -146,12 +191,10 @@
 						if (zipEntry.name.includes(".json")) {
 							zipEntry.async("text").then(function (content) {
 								appCounter = appCounter + 1;
-								addToAttrList(content, appCounter);
-								generatePlot();
+								addToAttrDict(content, appCounter);
+								treeAttributes.reload();
 							});
 						}
-					
-						
 
 					});
 				}, function (e) {
@@ -167,140 +210,274 @@
 		}
 	});
 
-	// ATTRIBUTE LIST
-	var tree = $("#attrTreeSelect").treeMultiselect({
-			allowBatchSelection: true,
-			onChange: treeOnChange,
-			startCollapsed: false,
-			hideSidePanel: true
-	});
-	function treeOnChange(allSelectedItems, addedItems, removedItems) {
-		console.log("something changed!");
-	}
-		
-
-	var attrList = {};
-	function addToAttrList (json_flat, appCounter) {
-		
+	function addToAttrDict (json_flat, appCounter) {
 		json_object = JSON.parse(json_flat);		
 		var applicationName = json_object.applicationName;
+		var attr;
+		tempAttrDict = {}
 		for (i in json_object.frames) {
 			for (j in json_object.frames[i].frameAttributes) {
-				if (!(j in attrList)) {
-					attrList[j] = {};
+				if (!(j in tempAttrDict)) {
+					tempAttrDict[j] = {};
 				}
-				attrList[j][json_object.frames[i].frameStamp.substring(6,12)] = json_object.frames[i].frameAttributes[j];
+				tempAttrDict[j][json_object.frames[i].frameStamp.substring(6,12)] = json_object.frames[i].frameAttributes[j];
 			}	
 		}
-		for (i in Object.keys(attrList)){
-			
-			$("#attrTreeSelect").append("<li></li>")
-					.attr("value", Object.keys(attrList)[i])
-					.attr("data-section",applicationName)
-				  .attr("selected","selected")
-					.text(Object.keys(attrList)[i]);
+		for (i in Object.keys(tempAttrDict)){
+			//console.log(Object.keys(tempAttrDict)[i]+" "+sum(tempAttrDict[Object.keys(tempAttrDict)[i]]));
+			attr = Object.keys(tempAttrDict)[i];
+			first = attr.substring(0,1)
+			last = attr.substring(attr.length-1);
+			if (sum(tempAttrDict[attr])!=0 && !isNaN(sum(tempAttrDict[attr]))){
+				if (applicationName=='Kinect' && parseFloat(first)>0){
+					if (last=="X" || last=="Y" || last=="Z") { 
+						html = "<option value='"+attr+"' data-section='"+applicationName+"/"+first+"/"+attr.substring(1,attr.length-1)+"'>"+last+	"</option>";
+					} else {
+						html = "<option value='"+attr+"' data-section='"+applicationName+"/"+first+"'>"+attr.substring(1)+"</option>";
+					}
+					$("#attrTreeSelect").append(html);
+				} else {
+					$("#attrTreeSelect").append("<option value='"+attr+"' data-section='"+applicationName+"'>"+attr+"</option>");
+				}
+			}
 		}
-		tree[0].reload();
+		attrDict = Object.assign(attrDict, tempAttrDict);
+		//console.log(JSON.stringify(attrDict));
 	}
+
 	// generatePlot (out of the AttributeList)
-	function generatePlot() {
-		if (typeof attrList != "undefined" && Object.keys(attrList).length>0){		
-			var xs = {};
-			var columns = [];
-			var regions = [];
-			var keyMax = 0;
-			for (attr in attrList) {
-				cols = $.map(attrList[attr], function (value, key) { return value });
+
+	function treeOnChange(allSelectedItems, addedItems, removedItems) {
+		var xs = {};
+		var columns = [];
+		var keyMax = 0;
+		var attr;
+		for (i in allSelectedItems){
+			attr = allSelectedItems[i].value;
+			if (sum(attrDict[attr])!=0 && !isNaN(sum(attrDict[attr]))){ 
+				cols = $.map(attrDict[attr], function (value, key) { return value });
 				cols.unshift(attr);
-				rows = $.map(attrList[attr], function (value, key) { return String(key)});
-			
+				rows = $.map(attrDict[attr], function (value, key) { return String(key)});
 				max = rows[rows.length - 1];
 				if (max > keyMax) {
 					keyMax = max;
 				}
 				rows.unshift(attr + '_x');
-				
 				columns.push(cols);
 				columns.push(rows);
 				xs[attr] = attr + '_x';
 			}
-			
-			// Create the xAxis Ticks index
-			
-			var xAxisTicks = [];
-			var xscale = 5;
-			if (keyMax > 0) {
-				q = Math.floor(keyMax / xscale);
-				for (i = 0; i <= (q * xscale); i = i + xscale) {
-					xAxisTicks.push(i);
-				}
-
-			}
-			// GENERATE CHART
-			var chart = c3.generate({
-				bindto: '#plotGraph',
-				data: {
-					xs: xs,
-					xFormat: '%S.%L',
-					columns: columns,
-					onclick: function (id) {
-						document.getElementById("theVideo").currentTime = id.x;
-					}
-				},
-				subchart: {
-					show: true,
-					onbrush: function (domain) {
-						$('#interval').val(domain[0].toFixed(3) + ', ' + domain[1].toFixed(3));
-					}
-				},
-				legend: {
-					position: 'right'
-				},
-				grid: {
-					x: {show: true},
-					y: {show: true}
-				},
-				zoom: {
-					enabled: false,
-					onzoom: function (domain) {
-						$('#interval').val(domain[0].toFixed(3) + ', ' + domain[1].toFixed(3));
-					}
-				},
-				axis: {
-					x: {
-						tick: {
-							values: xAxisTicks
-						},
-						label: "Time (s)"
-					}
-				},
-				size: {
-					height: 500
-				},
-				padding:{
-					top:20
-				}
-
-			});
-
-			$("#addAnnotation").click(function () {
-				var arr = $("#interval").val().split(','),
-					begin = arr[0], stop = arr[1];
-				regions.push({ axis: 'x', start: begin, end: stop, class: 'rated' });
-				chart.regions(regions);
-			});
-
-			$("#theVideo").on("timeupdate",
-				function (event) {
-					chart.xgrids([{
-						value: this.currentTime,
-						class: 'currentTime'
-					}]);
-
-				});
-			
 		}
-	}
+		var xAxisTicks = [];
+		var xscale = 5;
+		if (keyMax > 0) {
+			q = Math.floor(keyMax / xscale);
+			for (i = 0; i <= (q * xscale); i = i + xscale) {
+				xAxisTicks.push(i);
+			}
 
+		}
+		generatePlot(xs,columns,xAxisTicks);
+	}
+	function generatePlot(xs,columns,xAxisTicks) {
+		var chart = c3.generate({
+			bindto: '#plotGraph',
+			data: {
+				xs: xs,
+				xFormat: '%S.%L',
+				columns: columns,
+				onclick: function (id) {
+					document.getElementById("theVideo").currentTime = id.x;
+				}
+			},
+			subchart: {
+				show: true,
+				onbrush: function (domain) {
+					$('#interval').val(domain[0].toFixed(3) + ', ' + domain[1].toFixed(3));
+				}
+			},
+			legend: {
+				show: false
+			},
+			grid: {
+				x: {show: true},
+				y: {show: true}
+			},
+			zoom: {
+				enabled: false,
+				onzoom: function (domain) {
+					$('#interval').val(domain[0].toFixed(3) + ', ' + domain[1].toFixed(3));
+				}
+			},
+			axis: {
+				x: {
+					tick: {
+						values: xAxisTicks
+					},
+					label: "Time (s)"
+				},
+				y: {
+					tick: {
+						format: d3.format('.2f')
+					}
+				}
+			},
+			size: {
+				height: 500
+			},
+			padding:{
+				top:20
+			}
+
+		});
+		chart.regions(regions);
+
+		$("#theVideo video").on("timeupdate",
+			function (event) {
+				chart.xgrids([{
+					value: this.currentTime,
+					class: 'currentTime'
+			}]);
+		});
+	 }//end generate plot
+
+
+	 // ATTRIBUTE LIST
+	 var treeAttributes = $("#attrTreeSelect").treeMultiselect({
+			allowBatchSelection: true,
+			onChange: treeOnChange,
+			startCollapsed: true,
+			hideSidePanel: true,
+			//searchable: true
+		})[0];
+
+	var timeframeList = $("#timeframeList").treeMultiselect({
+			allowBatchSelection: true,
+			//onChange: treeOnChange,
+			startCollapsed: false,
+			hideSidePanel: true,
+			//searchable: true
+		})[0];
+
+
+	$("#addTimeframe").unbind().click(function () {
+		console.log("addtimeframe is called");
+		var arr = $("#interval").val().split(','),
+			begin = arr[0], stop = arr[1];
+		regions.push({ axis: 'x', start: begin, end: stop, class: 'rated' });
+		$("#timeframeList").append("<option value='"+begin+","+stop+"' data-section='Timeframes'>From s "+begin+" to s "+stop+"</option>");
+		timeframeList.reload();
+		//chart.regions(regions);
+	});
+
+	$("#exportXAPI").unbind().click(function () {
+		console.log("export xapi started");
+		var timeframes = $("#timeframeList").val();
+		var attributes = $("#attrTreeSelect").val()
+		console.log(attributes);
+		var matchingKeys;
+		var myKeys;
+		//xapiVar 
+		var newDict;
+		var timestamp; 
+		var actor;
+		var verb;
+		var object;
+		var result;
+		var authority;
+		var contextExtentions;
+		var xAPIObject = {};
+		var xAPIlist = {};
+		for (i in timeframes) {
+			start = parseFloat(timeframes[i].split(",")[0]);
+			stop = parseFloat(timeframes[i].split(",")[1]);
+			newDict = {};
+			for (j in attributes){
+				keys = Object.keys(attrDict[attributes[j]]);
+				for (k in keys){
+					if (keys[k]>=start && keys[k]<=stop) { 
+						if (!(attributes[j] in newDict)) {
+							newDict[attributes[j]] = {};
+						}
+						newDict[attributes[j]][keys[k]] = attrDict[attributes[j]][keys[k]];
+					}
+				}
+			}
+
+			// create xAPI 
+			timestamp = $("#inputTimestamp").val();
+			if (timestamp){
+				xAPIObject['timestamp'] = timestamp;
+			}
+			xAPIObject['stored'] = moment().format('YYYY-MM-DThh:mm:ss.SSS');
+			actor = $("#inputActor").val();
+			if (actor){
+				xAPIObject['actor'] = {};
+				xAPIObject['actor']['name'] = actor;
+			}
+			verb = $("#inputVerb").val();
+			if (verb){
+				xAPIObject['verb'] = {};
+				xAPIObject['verb']['id'] = verb;
+			}
+			object = $("#inputObject").val();
+			if (object){
+				xAPIObject['object'] = {};
+				xAPIObject['object']['id'] = object;
+			}
+			result = $("#inputResult").val();
+			if (result){
+				xAPIObject['result'] = {};
+				xAPIObject['result']['success'] = result;
+			}
+			authority = $("#inputAuthority").val();
+			if (authority){
+				xAPIObject['authority'] = authority;
+			}
+			contextExtentions = newDict;
+			if (contextExtentions){
+				xAPIObject['context'] = {};
+				xAPIObject['context']['extensions'] = contextExtentions;
+			}	
+			xAPItitle = 'xapi_'+timeframes[i].replace(', ','-');
+			xAPIlist[xAPItitle] = xAPIObject;
+			/*
+				{
+					  "actor": {
+					    "name": "'+iAuthor+'",
+					  },
+					  "verb": {
+					    "id": "'+iVerb+'",
+					  },
+					  "object": {
+					    "id": "'+iObject+'",
+					  },
+					  "result": {
+					    "success": "'+iResult+'",
+					  },
+					  "context": {
+					    "extensions": '+newDict+',
+					  },
+					  "timestamp": "'+iTimestamp+'",
+					  "stored": date.now,
+					  "authority":  "'+iAuthority+'",
+					}
+			*/
+
+		}
+		$("a#downloadJSON").html("Download JSON").attr("href","data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(xAPIlist, 0, 4)));
+
+	});
+
+	function sum( obj ) {
+	  var sum = 0;
+	  for( var el in obj ) {
+	    if( obj.hasOwnProperty( el ) ) {
+	      sum += parseFloat( obj[el] );
+	    }
+	  }
+	  return sum;
+	}
+	
   </script>
 </html>
