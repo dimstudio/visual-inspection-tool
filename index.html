@@ -79,7 +79,7 @@
 						    </div>
 						    <div class="col-sm-8">
 						      <button type="button" id="addTimeframe" class="btn btn-primary">Add timeframe</button>
-						      <button type="button" class="btn btn-danger">Delete</button>
+						      <button type="button" class="btn btn-danger" id="delete-button">Delete</button>
 						    </div>
 						</div>
 					  	<div class="form-group row">
@@ -287,7 +287,7 @@
 				xFormat: '%S.%L',
 				columns: columns,
 				onclick: function (id) {
-					document.getElementById("theVideo").currentTime = id.x;
+					$("#theVideo video").currentTime = id.x;
 				}
 			},
 			subchart: {
@@ -368,6 +368,17 @@
 		$("#timeframeList").append("<option value='"+begin+","+stop+"' data-section='Timeframes'>From s "+begin+" to s "+stop+"</option>");
 		timeframeList.reload();
 		//chart.regions(regions);
+	});
+
+	$("#delete-button").click(function(){
+	    if(confirm("Are you sure you want to delete all the selected timeframes?")){
+	        $("#timeframeList option:selected").remove();
+	        timeframeList.reload();
+	        regions = [];
+	    }
+	    else{
+	        return false;
+	    }
 	});
 
 	$("#exportXAPI").unbind().click(function () {
