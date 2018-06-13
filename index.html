@@ -28,7 +28,7 @@
 	<![endif]-->
 		
     <style>
-		.c3-region.rated {fill: red;}
+		.c3-region.rated {fill: yellow; stroke: #ffcc00; stroke-width:1}
 		.c3-xgrid-line.currentTime line {
 		    stroke: red;
 		    stroke-width:2
@@ -41,6 +41,7 @@
 		div.section > div.section, div.tree-multiselect div.section > div.item {padding-left: 5px;}
 		.smallInput {width:18%; float: left; margin-right:5px;}
 		div.tree-multiselect { border: 0px;}
+		.howTo {background: #FFF url('css/how-to-use.png'); background-repeat: no-repeat; background-position: top center; opacity: .5; background-size: 75%; }
 	</style>
 </head>
 <body>
@@ -148,6 +149,7 @@
 		$("#theVideo").html("<video style='width:100%;' controls=''></video>");
 		$video = $("#theVideo video");
 		regions = [];
+		var chart;
 
 		//$video.first();
 
@@ -286,14 +288,15 @@
 		generatePlot(xs,columns,xAxisTicks);
 	}
 	function generatePlot(xs,columns,xAxisTicks) {
-		var chart = c3.generate({
+
+		chart = c3.generate({
 			bindto: '#plotGraph',
 			data: {
 				xs: xs,
 				xFormat: '%S.%L',
 				columns: columns,
 				onclick: function (id) {
-					$("#theVideo video").currentTime = id.x;
+					$("#theVideo video")[0].currentTime=id.x;
 				}
 			},
 			subchart: {
@@ -310,7 +313,8 @@
 				y: {show: true}
 			},
 			zoom: {
-				enabled: false,
+				enabled: true,
+				rescale: true,
 				onzoom: function (domain) {
 					$('#interval').val(domain[0].toFixed(3) + ', ' + domain[1].toFixed(3));
 				}
@@ -320,7 +324,8 @@
 					tick: {
 						values: xAxisTicks
 					},
-					label: "Time (s)"
+					label: "Time (s)",
+					min: 0
 				},
 				y: {
 					tick: {
@@ -345,6 +350,12 @@
 					class: 'currentTime'
 			}]);
 		});
+		if ($.isEmptyObject(xs)){
+			$("#plotGraph").addClass('howTo');
+		} else {
+			$("#plotGraph").removeClass('howTo');
+		}
+
 	 }//end generate plot
 
 
@@ -359,7 +370,7 @@
 
 	var timeframeList = $("#timeframeList").treeMultiselect({
 			allowBatchSelection: true,
-			//onChange: treeOnChange,
+			onChange: timeframesOnChange,
 			startCollapsed: false,
 			hideSidePanel: true,
 			//searchable: true
@@ -367,25 +378,38 @@
 
 
 	$("#addTimeframe").unbind().click(function () {
-		console.log("addtimeframe is called");
 		var arr = $("#interval").val().split(','),
 			begin = arr[0], stop = arr[1];
 		regions.push({ axis: 'x', start: begin, end: stop, class: 'rated' });
 		$("#timeframeList").append("<option value='"+begin+","+stop+"' data-section='Timeframes'>From s "+begin+" to s "+stop+"</option>");
 		timeframeList.reload();
-		//chart.regions(regions);
+		chart.regions(regions);	
 	});
 
 	$("#delete-button").click(function(){
 	    if(confirm("Are you sure you want to delete all the selected timeframes?")){
-	        $("#timeframeList option:selected").remove();
-	        timeframeList.reload();
-	        regions = [];
+	        var values = $("#timeframeList option:selected").map(function() { return $(this).val(); });
+	        for (i in values){
+	        	if(values[i].length>5){
+	        		for (k in regions){
+			        	if (regions[k].start == values[i].split(', ')[0] && $.trim(regions[k].end) == values[i].split(', ')[1]){
+			        		regions.splice(k,1);
+			        	}
+			        }
+	        	}
+	        }
+	        chart.regions(regions);
+			$("#timeframeList option:selected").remove();
+			timeframeList.reload();
 	    }
 	    else{
 	        return false;
 	    }
 	});
+
+	function timeframesOnChange(allSelectedItems, addedItems, removedItems) {
+
+	}
 
 	$("#exportXAPI").unbind().click(function () {
 		console.log("export xapi started");
