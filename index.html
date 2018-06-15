@@ -29,19 +29,22 @@
 		
     <style>
 		.c3-region.rated {fill: yellow; stroke: #ffcc00; stroke-width:1}
-		.c3-xgrid-line.currentTime line {
-		    stroke: red;
-		    stroke-width:2
-		}
+		.c3-region.selected {fill: blue; stroke: blue; stroke-width:1}
+		.c3-xgrid-line.currentTime line {stroke: red; stroke-width:2}
 		div.tree-multiselect > div.selections {width: 100%}
 		#attrTree {padding-right: 0;}
 		#plotsContainer {padding-left: 0;}
 		div.tree-multiselect > div.selections.no-border {max-height: 500px; overflow-y: scroll;}
 		#wrapper {padding: 0 40px 0 20px;}
 		div.section > div.section, div.tree-multiselect div.section > div.item {padding-left: 5px;}
-		.smallInput {width:18%; float: left; margin-right:5px;}
+		.smallInput {/*width:18%;*/ width: 40%; float: left; margin-right:5px;}
+		.zoomInput {width:35%; float: left; margin-right:5px;}
 		div.tree-multiselect { border: 0px;}
 		.howTo {background: #FFF url('css/how-to-use.png'); background-repeat: no-repeat; background-position: top center; opacity: .5; background-size: 75%; }
+		.form-group { margin-bottom: 0px;}
+		#keyValuePairList input {margin-top:5px;}
+		#keyValuePairList {display: inline-block; width: 100%;}
+		#keyValuePairList label {display: block; float: left; width: 41%; font-weight: 700; padding: 10px 0 0;}
 	</style>
 </head>
 <body>
@@ -53,7 +56,7 @@
 		</div>
 		<div class="col-sm-4" >
 			<br />
-			<p class="small" style="text-align: right;">Version 1.1 - Credits: <a href="http://www.dimstudio.org" target="_blank">Daniele Di Mitri</a> - Open Universiteit (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>)</p>
+			<p class="small" style="text-align: right;">Version 1.2 - Credits: <a href="http://www.dimstudio.org" target="_blank">Daniele Di Mitri</a> - Open Universiteit (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>)</p>
 		</div>
 	</div>
 	<div class="row">
@@ -76,40 +79,48 @@
 			</div>
 			<div class="panel panel-default">
 				<div class="panel-heading panel-footer">
-				    <h3 class="panel-title ">Annotation editor <small>Experience API generator</small></h3>
+				    <h3 class="panel-title ">Annotation editor</h3>
 				</div>
 				<div class="panel-body">	
-				  	<form>
-				  		<div class="form-group row">
-						    <div class="col-sm-4">
-						      <input type="text" readonly class="form-control" id="interval" placeholder="Zoom into the plot legend">
-						    </div>
-						    <div class="col-sm-8">
-						      <button type="button" id="addTimeframe" class="btn btn-primary">Add timeframe</button>
-						      <button type="button" class="btn btn-danger" id="delete-button">Delete</button>
-						    </div>
-						</div>
-					  	<div class="form-group row">
-				  			<div class="col-sm-12">
-				  				<input type="text" class="form-control smallInput" id="inputTimestamp" placeholder="Time" required>
-						      	<input type="text" class="form-control smallInput" id="inputActor" placeholder="Actor" style="" required>
-						      	<input type="text" class="form-control smallInput" id="inputVerb" placeholder="Verb" required>
-						      	<input type="text" class="form-control smallInput" id="inputObject" placeholder="Object" required>
-						    	<input type="text" class="form-control smallInput" id="inputResult" placeholder="Result" required>
-						    </div>
-				  		</div>
+			  		<div class="form-group row">
+					    <div class="col-sm-5">
+					      <input type="text" readonly class="form-control input-sm zoomInput" id="interval" placeholder="Zoom into the plot legend">
+					      <button type="button" id="addinterval" class="btn btn-success btn-sm">Add interval</button>
+					      <button type="button" class="btn btn-danger  btn-sm" id="delete-button">Delete</button>
+					      <select id="intervalList"></select>
+					    </div>
+					    <div class="col-sm-7">
+					    	<div>
+						    	<input type="text" class="form-control input-sm smallInput" id="inputKey" placeholder="Annotation label" required>
+						    	<!--<input type="text" class="form-control input-sm smallInput" id="inputDefaultValue" placeholder="Add defualt value" required>-->
+						    	<button type="button" id="addKeyValuePair" class="btn btn-success btn-sm">Add</button>
+						    	<button type="button" id="exportJSON" class="btn btn-primary btn-sm">Export JSON</button>
+					    	</div>
+					    	<form id="keyValuePairForm">
+					    		<div id="keyValuePairList"></div>
+					    	</form>
+					    </div>
+					</div>
+				  	<!--<div class="form-group row">
+			  			<div class="col-sm-12">
+			  				<input type="text" class="form-control smallInput" id="inputTimestamp" placeholder="Time" required>
+					      	<input type="text" class="form-control smallInput" id="inputActor" placeholder="Actor" style="" required>
+					      	<input type="text" class="form-control smallInput" id="inputVerb" placeholder="Verb" required>
+					      	<input type="text" class="form-control smallInput" id="inputObject" placeholder="Object" required>
+					    	<input type="text" class="form-control smallInput" id="inputResult" placeholder="Result" required>
+					    </div>
+			  		</div>
 
-						<div class="form-group row">
-				  			<div class="col-sm-12" id="xAPIForm">
-						      	<input type="text" class="form-control smallInput" id="inputAuthority" placeholder="Authority">
-						      	<button type="button" id="exportXAPI" class="btn btn-primary right">Export xAPI</button>
-						      	<a href="" download="xAPIlist.json" id="downloadJSON"></a>
-						    </div>
-				  		</div>				  		
-				  		<div class="row">
-					  		<select id="timeframeList"></select>
-					  	</div>
-				  	</form>
+					<div class="form-group row">
+			  			<div class="col-sm-12" id="xAPIForm">
+					      	<input type="text" class="form-control smallInput" id="inputAuthority" placeholder="Authority">
+					      	<button type="button" id="exportXAPI" class="btn btn-primary right">Export xAPI</button>
+					      	<a href="" download="xAPIlist.json" id="downloadJSON"></a>
+					    </div>
+			  		</div>-->				  		
+			  		<div class="row">
+				  		
+				  	</div>
 				</div>
 			</div>
 		</div>
@@ -133,14 +144,17 @@
 	var $video;
 	var attrDict; 
 	var regions;
+	var annObjLen;
+	var annTf = 0.5; // annotatoom timeframe
+
 
 	$("#theFile").on("change", function (evt) {
 		// remove content
 		$result.html("");
 		attrDict = {};
 		$("#interval").val("");
-		$("#timeframeList").find('option').remove();
-		timeframeList.reload();
+		$("#intervalList").find('option').remove();
+		intervalList.reload();
 		$('#attrTreeSelect').find('option').remove();
 		treeAttributes.reload();
 		treeOnChange();
@@ -150,9 +164,7 @@
 		$video = $("#theVideo video");
 		regions = [];
 		var chart;
-
-		//$video.first();
-
+		annObjLen = 0;
 
 		// be sure to show the results
 		$("#result_block").removeClass("hidden").addClass("show");
@@ -251,6 +263,15 @@
 		}
 		attrDict = Object.assign(attrDict, tempAttrDict);
 		//console.log(JSON.stringify(attrDict));
+		
+		// Determine max time-length (max key for each attribute in the attrDict)
+		for (i in attrDict){
+			if (getMax(attrDict[i])> annObjLen){
+				annObjLen = getMax(attrDict[i]);
+			}
+
+		}
+
 	}
 
 	// generatePlot (out of the AttributeList)
@@ -313,7 +334,7 @@
 				y: {show: true}
 			},
 			zoom: {
-				enabled: true,
+				enabled: false,
 				rescale: true,
 				onzoom: function (domain) {
 					$('#interval').val(domain[0].toFixed(3) + ', ' + domain[1].toFixed(3));
@@ -368,52 +389,160 @@
 			//searchable: true
 		})[0];
 
-	var timeframeList = $("#timeframeList").treeMultiselect({
+	var intervalList = $("#intervalList").treeMultiselect({
 			allowBatchSelection: true,
-			onChange: timeframesOnChange,
+			onChange: intervalsOnChange,
 			startCollapsed: false,
 			hideSidePanel: true,
 			//searchable: true
 		})[0];
 
 
-	$("#addTimeframe").unbind().click(function () {
-		var arr = $("#interval").val().split(','),
-			begin = arr[0], stop = arr[1];
-		regions.push({ axis: 'x', start: begin, end: stop, class: 'rated' });
-		$("#timeframeList").append("<option value='"+begin+","+stop+"' data-section='Timeframes'>From s "+begin+" to s "+stop+"</option>");
-		timeframeList.reload();
-		chart.regions(regions);	
+	$("#addinterval").unbind().click(function () {
+		if ($("#interval").val()){
+			var arr = $("#interval").val().split(", "),
+				begin = arr[0], stop = arr[1];
+			regions.push({ axis: 'x', start: begin, end: stop, class: 'rated' });
+			$("#intervalList").append("<option value='"+begin+", "+stop+"' data-section='intervals'>"+begin+"s to "+stop+"s</option>");
+			intervalList.reload();
+			chart.regions(regions);	
+		}
 	});
 
 	$("#delete-button").click(function(){
-	    if(confirm("Are you sure you want to delete all the selected timeframes?")){
-	        var values = $("#timeframeList option:selected").map(function() { return $(this).val(); });
+	    if(confirm("Are you sure you want to delete all the selected intervals?")){
+	        var values = $("#intervalList option:selected").map(function() { return $(this).val(); });
 	        for (i in values){
 	        	if(values[i].length>5){
 	        		for (k in regions){
-			        	if (regions[k].start == values[i].split(', ')[0] && $.trim(regions[k].end) == values[i].split(', ')[1]){
+			        	if (regions[k].start == values[i].split(', ')[0] && regions[k].end == values[i].split(', ')[1]){
 			        		regions.splice(k,1);
 			        	}
 			        }
 	        	}
 	        }
 	        chart.regions(regions);
-			$("#timeframeList option:selected").remove();
-			timeframeList.reload();
+			$("#intervalList option:selected").remove();
+			intervalList.reload();
 	    }
 	    else{
 	        return false;
 	    }
 	});
 
-	function timeframesOnChange(allSelectedItems, addedItems, removedItems) {
+	function intervalsOnChange(allSelectedItems, addedItems, removedItems) {
+		var keys = [];
+		var inter;
+		var temp = {};
+		$("input[name=inputKeyList]").each(function() { keys.push($(this).val()); });
+		$("input[name=inputValueList]").val('').attr('placeholder','Add value');
+		for (k in regions){
+			regions[k].class = "rated";
+		}
+		for (i in allSelectedItems){
+			inter = allSelectedItems[i].value;
+			for (k in regions){
+				if (regions[k].start == inter.split(', ')[0] && regions[k].end == inter.split(', ')[1]){			regions[k].class = "selected";
+			        for (j in keys){
+			        	if (regions[k].hasOwnProperty(keys[j])) {			
+			        		if (!temp.hasOwnProperty(keys[j])) temp[keys[j]] = regions[k][keys[j]];
+			        		if (regions[k][keys[j]] == temp[keys[j]]){
+			        			$("input[name=inputKeyList][value="+keys[j]+"]").next().val(temp[keys[j]]);
+			        		} else {
+			        			$("input[name=inputKeyList][value="+keys[j]+"]").next().val('').attr('placeholder','?');
+			        		}
+			        	} else if (temp.hasOwnProperty(keys[j])){
+			        		$("input[name=inputKeyList][value="+keys[j]+"]").next().val('').attr('placeholder','?');
+			        	} else {
+			        		temp[keys[j]] = '';
+			        	}
 
+			        } 
+			    }
+			}
+		}
+		//console.log(regions);
+		// TODO if 
+		chart.regions(regions);	
 	}
 
-	$("#exportXAPI").unbind().click(function () {
+
+	$("#addKeyValuePair").unbind().click(function () {
+		var key = $("#inputKey").val();
+		var dValue = $("#inputDefaultValue").val();
+		if (key) {
+			$("#keyValuePairList").append('<label>'+key+'</label><input type="hidden" name="inputKeyList" value="'+key+'" /><input type="text" class="form-control input-sm smallInput" name="inputValueList" placeholder="Add value"/>');
+			$("#inputKey").val('').removeAttr('value');
+			$("#inputDefaultValue").val('').removeAttr('value');
+		}
+
+	});
+
+	$("#keyValuePairForm").on("change", function (evt) {
+		var inputKeys = [];
+		var inputValues = [];
+		var annotationList;
+		var inter;
+
+		$("input[name='inputKeyList']").each(function() { inputKeys.push($(this).val()); });
+		$("input[name='inputValueList']").each(function() { inputValues.push($(this).val()); });
+		if (inputKeys!=[]&&inputValues!=[]){
+			annotationList = toObject(inputKeys,inputValues);
+		}
+		var interv = $('select#intervalList').val();
+	    for (i in interv){
+	    	inter = interv[i];
+			for (k in regions){
+				if (regions[k].start == inter.split(', ')[0] && regions[k].end == inter.split(', ')[1]){
+					for (j in annotationList){
+			        	regions[k][j] = annotationList[j]; //set
+			        }
+				}
+			}
+		}
+	});
+
+	$("#exportJSON").unbind().click(function () {
+		var intervals = $("#intervalList").val();
+		var keys = [];
+		var values = [];
+		var annotationList;
+		var temp = false; 
+		var inter;
+		var annObj = [];
+		$("input[name='inputKeyList']").each(function() { keys.push($(this).val()); });
+		$("input[name='inputValueList']").each(function() { values.push($(this).val()); });
+		annotationList = toObject(keys,values);
+		if (!$.isEmptyObject(annotationList)){
+			for (var i = 0; i < annObjLen/annTf; i++) {
+				for (k in regions){
+					if(regions[k].class='selected' && temp == false){
+						if (i*annTf>=parseFloat(regions[k].start) && i*annTf<=parseFloat(regions[k].end)){
+							//console.log(i*annTf);
+							//console.log(parseFloat(regions[k].start));
+							for (j in keys){
+								if (regions[k].hasOwnProperty(keys[j])){
+									//console.log("here")
+									annotationList[keys[j]] = regions[k][keys[j]];
+									temp = true;
+								}
+							}
+						}
+					}
+				}
+				annObj.push({
+					frameStamp: moment.utc(i*annTf*1000).format('HH:mm:ss.SSS'),
+					frameAttributes: annotationList
+				});
+				temp = false;
+			}
+		}
+		console.log(JSON.stringify(annObj));
+	});
+
+	/*$("#exportXAPI").unbind().click(function () {
 		console.log("export xapi started");
-		var timeframes = $("#timeframeList").val();
+		var intervals = $("#intervalList").val();
 		var attributes = $("#attrTreeSelect").val()
 		console.log(attributes);
 		var matchingKeys;
@@ -429,9 +558,9 @@
 		var contextExtentions;
 		var xAPIObject = {};
 		var xAPIlist = {};
-		for (i in timeframes) {
-			start = parseFloat(timeframes[i].split(",")[0]);
-			stop = parseFloat(timeframes[i].split(",")[1]);
+		for (i in intervals) {
+			start = parseFloat(intervals[i].split(",")[0]);
+			stop = parseFloat(intervals[i].split(",")[1]);
 			newDict = {};
 			for (j in attributes){
 				keys = Object.keys(attrDict[attributes[j]]);
@@ -480,36 +609,16 @@
 				xAPIObject['context'] = {};
 				xAPIObject['context']['extensions'] = contextExtentions;
 			}	
-			xAPItitle = 'xapi_'+timeframes[i].replace(', ','-');
+			xAPItitle = 'xapi_'+intervals[i].replace(', ','-');
 			xAPIlist[xAPItitle] = xAPIObject;
-			/*
-				{
-					  "actor": {
-					    "name": "'+iAuthor+'",
-					  },
-					  "verb": {
-					    "id": "'+iVerb+'",
-					  },
-					  "object": {
-					    "id": "'+iObject+'",
-					  },
-					  "result": {
-					    "success": "'+iResult+'",
-					  },
-					  "context": {
-					    "extensions": '+newDict+',
-					  },
-					  "timestamp": "'+iTimestamp+'",
-					  "stored": date.now,
-					  "authority":  "'+iAuthority+'",
-					}
-			*/
+
 
 		}
 		$("a#downloadJSON").html("Download JSON").attr("href","data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(xAPIlist, 0, 4)));
 
-	});
+	});*/
 
+	// Sums the values of a dictionary
 	function sum( obj ) {
 	  var sum = 0;
 	  for( var el in obj ) {
@@ -519,6 +628,17 @@
 	  }
 	  return sum;
 	}
+	// Get the max key of a dicotionary
+	function getMax(obj) {
+	  return Math.max.apply(null,Object.keys(obj));
+	}
 	
+	// merge 2 lists into dictionary
+	function toObject(names, values) {
+	    var result = {};
+	    for (var i = 0; i < names.length; i++)
+	         result[names[i]] = values[i];
+	    return result;
+	}
   </script>
 </html>
