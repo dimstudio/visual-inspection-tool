@@ -38,7 +38,7 @@
 		#wrapper {padding: 0 40px 0 20px;}
 		div.section > div.section, div.tree-multiselect div.section > div.item {padding-left: 5px;}
 		.smallInput {/*width:18%;*/ width: 35%; float: left; margin-right:5px;}
-		.zoomInput {width:35%; float: left; margin-right:5px;}
+		.zoomInput {width:45%; float: left; margin-right:5px;}
 		div.tree-multiselect { border: 0px;}
 		.howTo {background: #FFF url('css/how-to-use.png'); background-repeat: no-repeat; background-position: top center; opacity: .5; background-size: 75%; }
 		.form-group { margin-bottom: 0px;}
@@ -57,7 +57,7 @@
 		</div>
 		<div class="col-sm-4" >
 			<br />
-			<p class="small" style="text-align: right;">Version 1.2 - Credits: <a href="http://www.dimstudio.org" target="_blank">Daniele Di Mitri</a> - Open Universiteit (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>)</p>
+			<p class="small" style="text-align: right;">Version 1.3 - Credits: <a href="http://www.dimstudio.org" target="_blank">Daniele Di Mitri</a> - Open Universiteit (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>)</p>
 		</div>
 	</div>
 	<div class="row">
@@ -85,7 +85,7 @@
 					</div> 	
 					<div class="panel-body">
 					   	<input type="text" readonly class="form-control input-sm zoomInput" id="interval" placeholder="Zoom into the plot legend">
-					    <button type="button" id="addinterval" class="btn btn-success btn-sm">Add interval</button>
+					    <button type="button" id="addinterval" class="btn btn-success btn-sm">Add</button>
 					    <button type="button" class="btn btn-danger btn-sm" id="delete-button">Delete</button>
 					    <select id="intervalList"></select>
 				    </div>
@@ -104,9 +104,25 @@
 				    			<div id="keyValuePairList"></div>
 				    		</form>
 				    		<div>
-				    			<button type="button" class="btn btn-default btn-sm" >Add to plot </button>
-				    			<button type="button" id="exportJSON" class="btn btn-primary btn-sm">JSON</button>
-				    			<a href="" download="annotations.json" id="downloadJSON"></a>
+				    			<!--Counter-->
+				    			<div><label for="annotationFPS" style="float:left; margin-right: 5px">Fps</label></div>
+						    	<div class="input-group" style="width:28%; float:left; margin-right:5px;">
+						          <span class="input-group-btn">
+						              <button type="button" class="btn btn-default btn-number btn-sm" disabled="disabled" data-type="minus" data-field="annotationFPS">
+						                  <span class="glyphicon glyphicon-minus"></span>
+						              </button>
+						          </span>
+						          <input type="text" name="annotationFPS" class="form-control input-number input-sm" value="1" min="1" max="25">
+						          <span class="input-group-btn">
+						              <button type="button" class="btn btn-default btn-number btn-sm" data-type="plus" data-field="annotationFPS">
+						                  <span class="glyphicon glyphicon-plus"></span>
+						              </button>
+						          </span>
+						      </div>
+				    			<!--/counter-->
+				    			<button type="button" id="exportJSON" class="btn btn-primary btn-sm">Generate</button>
+				    			<a class="btn btn-default btn-sm" href="" download="annotations.json" id="downloadJSON" style="display: none;"></a>
+				    			<button type="button" id="plotJSON" class="btn btn-default btn-sm" style="display: none;">Plot</button>
 				    		</div>
 				    	</div>
 				    </div>
@@ -175,7 +191,7 @@
 		$('#attrTreeSelect').find('option').remove();
 		treeAttributes.reload();
 		treeOnChange();
-		$("a#downloadJSON").html("").attr("href","");
+		$("a#downloadJSON").html("").attr("href","").hide();
 		$("#theVideo video").remove();
 		$("#theVideo").html("<video style='width:100%;' controls=''></video>");
 		$video = $("#theVideo video");
@@ -230,7 +246,7 @@
 						if (zipEntry.name.includes(".json")) {
 							zipEntry.async("text").then(function (content) {
 								appCounter = appCounter + 1;
-								addToAttrDict(content, appCounter);
+								addToAttrDict(content);
 								treeAttributes.reload();
 							});
 						}
@@ -249,7 +265,7 @@
 		}
 	});
 
-	function addToAttrDict (json_flat, appCounter) {
+	function addToAttrDict (json_flat) {
 		json_object = JSON.parse(json_flat);		
 		var applicationName = json_object.applicationName;
 		var attr;
@@ -275,6 +291,13 @@
 						html = "<option value='"+attr+"' data-section='"+applicationName+"/"+first+"'>"+attr.substring(1)+"</option>";
 					}
 					$("#attrTreeSelect").append(html);
+				} else {
+					$("#attrTreeSelect").append("<option value='"+attr+"' data-section='"+applicationName+"'>"+attr+"</option>");
+				}
+			} else if (stringObj(tempAttrDict[attr])) {
+				// Categoric e.g. feedback
+				if (applicationName=='Kinect' && parseFloat(first)>0){
+					$("#attrTreeSelect").append("<option value='"+attr+"' data-section='"+applicationName+"/"+first+"'>"+attr.substring(1)+"</option>");
 				} else {
 					$("#attrTreeSelect").append("<option value='"+attr+"' data-section='"+applicationName+"'>"+attr+"</option>");
 				}
@@ -325,7 +348,16 @@
 				columns.push(cols);
 				columns.push(rows);
 				xs[attr] = attr + '_x';
-			}
+			} else if (stringObj(attrDict[attr])) {
+				// String time series (e.g. feedback)
+				rows = $.map(attrDict[attr], function (value, key) { return String(key)});
+				rows.unshift(attr + '_x');
+				values = $.map(attrDict[attr], function (value, key) { return "0" });
+				values.unshift(attr);
+				columns.push(values);
+				columns.push(rows);
+				xs[attr] = attr + '_x';
+			}	
 		}
 		var xAxisTicks = [];
 		var xscale = 5;
@@ -339,7 +371,6 @@
 		generatePlot(xs,columns,xAxisTicks);
 	}
 	function generatePlot(xs,columns,xAxisTicks) {
-
 		chart = c3.generate({
 			bindto: '#plotGraph',
 			data: {
@@ -389,7 +420,16 @@
 			},
 			padding:{
 				top:20
-			}
+			},
+			tooltip: {
+		        grouped: false,
+		        format: {
+		        	title: function (d) { return d +'s'; },
+		        	value: function (value, ratio, id, index) {
+			            return attrDict[id][Object.keys(attrDict[id])[index]];
+			        }
+		        }
+		    }
 
 		});
 		chart.regions(regions);
@@ -546,6 +586,12 @@
 		var inter;
 		var jsonObj = {};
 		var annObj = [];
+		var annTf
+		if ($("input[name=annotationFPS]").val()){
+			annTf = 1/parseFloat($("input[name=annotationFPS]").val());
+		} else {
+			annTf = 0.5;
+		}
 		$("input[name='inputKeyList']").each(function() { keys.push($(this).val()); });
 		$("input[name='inputValueDefault']").each(function() { values.push($(this).val());});
 		annotationList = toObject(keys,values);
@@ -573,8 +619,16 @@
 			jsonObj["recordingID"] = sessionName;
 			jsonObj["applicationName"] = "Annotations";
 			jsonObj["frames"] = annObj;
-			$("a#downloadJSON").html("Download JSON").attr("href","data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonObj, 0, 4)));
+			$("a#downloadJSON").html("JSON").show().attr("href","data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonObj, 0, 4)));
+			$("#plotJSON").show();
+
 		}
+
+		$("#plotJSON").unbind().on('click', function (e) {
+		    e.preventDefault();
+		    addToAttrDict(JSON.stringify(jsonObj));
+		    treeAttributes.reload();
+		});
 	});
 
 	/*$("#exportXAPI").unbind().click(function () {
@@ -665,6 +719,23 @@
 	  }
 	  return sum;
 	}
+
+	// Check if the values of a dictionary ares strings
+	function stringObj( obj ) {
+	  var sum = 0;
+	  var result = false;
+	  for( var el in obj ) {
+	    if( obj.hasOwnProperty( el ) ) {
+	    	if (obj[el] != null) {
+	      		sum += obj[el].length;
+	      	}
+	    }
+	  }
+	  if (sum > Object.keys(obj).length)
+	  	result = true;
+	  return result;
+	}
+
 	// Get the max key of a dicotionary
 	function getMax(obj) {
 	  return Math.max.apply(null,Object.keys(obj));
@@ -677,5 +748,7 @@
 	         result[names[i]] = values[i];
 	    return result;
 	}
+
   </script>
+  <script type="text/javascript" src="js/counter.js"></script>
 </html>
