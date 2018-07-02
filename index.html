@@ -122,32 +122,15 @@
 				    			<!--/counter-->
 				    			<button type="button" id="exportJSON" class="btn btn-primary btn-sm">Generate</button>
 				    			<a class="btn btn-default btn-sm" href="" download="annotations.json" id="downloadJSON" style="display: none;"></a>
+				    			<a class="btn btn-default btn-sm" href="" download="example.zip" id="downloadZIP" style="display: none;"></a>
 				    			<button type="button" id="plotJSON" class="btn btn-default btn-sm" style="display: none;">Plot</button>
 				    		</div>
 				    	</div>
 				    </div>
-			</div>
-
-				  	<!--<div class="form-group row">
-			  			<div class="col-sm-12">
-			  				<input type="text" class="form-control smallInput" id="inputTimestamp" placeholder="Time" required>
-					      	<input type="text" class="form-control smallInput" id="inputActor" placeholder="Actor" style="" required>
-					      	<input type="text" class="form-control smallInput" id="inputVerb" placeholder="Verb" required>
-					      	<input type="text" class="form-control smallInput" id="inputObject" placeholder="Object" required>
-					    	<input type="text" class="form-control smallInput" id="inputResult" placeholder="Result" required>
-					    </div>
-			  		</div>
-
-					<div class="form-group row">
-			  			<div class="col-sm-12" id="xAPIForm">
-					      	<input type="text" class="form-control smallInput" id="inputAuthority" placeholder="Authority">
-					      	<button type="button" id="exportXAPI" class="btn btn-primary right">Export xAPI</button>
-					      	<a href="" download="xAPIlist.json" id="downloadJSON"></a>
-					    </div>
-			  		</div>-->				  		
-			  		<div class="row">
-				  		
-				  	</div>
+			</div>			  		
+	  		<div class="row">
+		  		
+		  	</div>
 		</div>
 		<div class="col-sm-6" id="theVideo">
 		</div>
@@ -161,6 +144,8 @@
 				<div class="small" style="padding-left: 10px"> </div>
 				<div id="attrTree">
 					<select id="attrTreeSelect" multiple="multiple"></select>
+				</div>
+				<div id="actionAttributes">
 				</div>
 			</div>
 		</div>
@@ -198,7 +183,6 @@
 		regions = [];
 		var chart;
 		annObjLen = 0;
-		//$sessionName = "";
 
 		// be sure to show the results
 		$("#result_block").removeClass("hidden").addClass("show");
@@ -281,25 +265,27 @@
 		for (i in Object.keys(tempAttrDict)){
 			//console.log(Object.keys(tempAttrDict)[i]+" "+sum(tempAttrDict[Object.keys(tempAttrDict)[i]]));
 			attr = Object.keys(tempAttrDict)[i];
-			first = attr.substring(0,1)
-			last = attr.substring(attr.length-1);
-			if (sum(tempAttrDict[attr])!=0 && !isNaN(sum(tempAttrDict[attr]))){
-				if (applicationName=='Kinect' && parseFloat(first)>0){
-					if (last=="X" || last=="Y" || last=="Z") { 
-						html = "<option value='"+attr+"' data-section='"+applicationName+"/"+first+"/"+attr.substring(1,attr.length-1)+"'>"+last+	"</option>";
+			if ($("#attrTreeSelect option[value='"+attr+"']").length <= 0){ // check if it first exists
+				first = attr.substring(0,1);
+				last = attr.substring(attr.length-1);
+				if (sum(tempAttrDict[attr])!=0 && !isNaN(sum(tempAttrDict[attr]))){
+					if (applicationName=='Kinect' && parseFloat(first)>0){
+						if (last=="X" || last=="Y" || last=="Z") { 
+							html = "<option value='"+attr+"' data-section='"+applicationName+"/"+first+"/"+attr.substring(1,attr.length-1)+"'>"+last+	"</option>";
+						} else {
+							html = "<option value='"+attr+"' data-section='"+applicationName+"/"+first+"'>"+attr.substring(1)+"</option>";
+						}
+						$("#attrTreeSelect").append(html);
 					} else {
-						html = "<option value='"+attr+"' data-section='"+applicationName+"/"+first+"'>"+attr.substring(1)+"</option>";
+						$("#attrTreeSelect").append("<option value='"+attr+"' data-section='"+applicationName+"'>"+attr+"</option>");
 					}
-					$("#attrTreeSelect").append(html);
-				} else {
-					$("#attrTreeSelect").append("<option value='"+attr+"' data-section='"+applicationName+"'>"+attr+"</option>");
-				}
-			} else if (stringObj(tempAttrDict[attr])) {
-				// Categoric e.g. feedback
-				if (applicationName=='Kinect' && parseFloat(first)>0){
-					$("#attrTreeSelect").append("<option value='"+attr+"' data-section='"+applicationName+"/"+first+"'>"+attr.substring(1)+"</option>");
-				} else {
-					$("#attrTreeSelect").append("<option value='"+attr+"' data-section='"+applicationName+"'>"+attr+"</option>");
+				} else if (stringObj(tempAttrDict[attr])) {
+					// Categoric e.g. feedback
+					if (applicationName=='Kinect' && parseFloat(first)>0){
+						$("#attrTreeSelect").append("<option value='"+attr+"' data-section='"+applicationName+"/"+first+"'>"+attr.substring(1)+"</option>");
+					} else {
+						$("#attrTreeSelect").append("<option value='"+attr+"' data-section='"+applicationName+"'>"+attr+"</option>");
+					}
 				}
 			}
 		}
@@ -313,6 +299,7 @@
 			}
 
 		}
+		//$("#actionAttributes").html('<button type="button" id="attributesJSON" class="btn btn-primary right">JSON export</button>');
 
 	}
 
@@ -526,7 +513,6 @@
 			        	} else {
 			        		temp[keys[j]] = '';
 			        	}
-
 			        } 
 			    }
 			}
@@ -586,7 +572,11 @@
 		var inter;
 		var jsonObj = {};
 		var annObj = [];
-		var annTf
+		var annTf;
+		//var attrkeys;
+
+		// JSON export with attributes 25/06/18
+		var attributes = $("#attrTreeSelect").val();
 		if ($("input[name=annotationFPS]").val()){
 			annTf = 1/parseFloat($("input[name=annotationFPS]").val());
 		} else {
@@ -609,6 +599,19 @@
 						}
 					}
 				}
+				// Add to the JSON object also the selected attributes
+				/*for (a in attributes){
+					attrkeys = Object.keys(attrDict[attributes[a]]);
+					for (b in attrkeys){
+						if (attrkeys[b]>=i*annTf && attrkeys[b]<(i+1)*annTf) { 
+							if (!annotationList.hasOwnProperty(attributes[a])){
+								annotationList[attributes[a]] = attrDict[attributes[a]][attrkeys[b]];
+							} //else if(!isNaN(annotationList[attributes[a]]) && !isNaN(attrDict[attributes[a]][attrkeys[b]])) { 
+								//annotationList[attributes[a]] = (annotationList[attributes[a]] + attrDict[attributes[a]][attrkeys[b]])/2;
+							//}
+						}
+					}
+				}*/
 				annObj.push({
 					frameStamp: moment.utc(i*annTf*1000).format('HH:mm:ss.SSS'),
 					frameAttributes: annotationList
@@ -619,9 +622,26 @@
 			jsonObj["recordingID"] = sessionName;
 			jsonObj["applicationName"] = "Annotations";
 			jsonObj["frames"] = annObj;
-			$("a#downloadJSON").html("JSON").show().attr("href","data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonObj, 0, 4)));
-			$("#plotJSON").show();
+			jsonFile = JSON.stringify(jsonObj, 0, 4);
 
+
+			/*JSZipUtils.getBinaryContent('YourWindowsApp.zip', function(err, data) {
+		      if(err) { throw err; 
+		      }
+
+		      var zip = new JSZip(data);
+		      zip.file("Hello.txt", "Hello World\n");
+		      var folder = zip.folder("images");
+		      folder.file("folder.txt", "I'm a file in a new folder");
+		      var content = zip.generate({type:"blob"});
+		      // see FileSaver.js
+		      saveAs(content, "example.zip");
+		    });*/
+
+
+			$("a#downloadJSON").html("JSON").show().attr("href","data:text/json;charset=utf-8," + encodeURIComponent(jsonFile));
+			//$("a#downloadZIP").html("JSON").show().attr("href","data:application/x-zip-compressed;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonObj, 0, 4)));
+			$("#plotJSON").show();
 		}
 
 		$("#plotJSON").unbind().on('click', function (e) {
@@ -630,84 +650,16 @@
 		    treeAttributes.reload();
 		});
 	});
-
-	/*$("#exportXAPI").unbind().click(function () {
-		console.log("export xapi started");
-		var intervals = $("#intervalList").val();
-		var attributes = $("#attrTreeSelect").val()
-		console.log(attributes);
-		var matchingKeys;
-		var myKeys;
-		//xapiVar 
-		var newDict;
-		var timestamp; 
-		var actor;
-		var verb;
-		var object;
-		var result;
-		var authority;
-		var contextExtentions;
-		var xAPIObject = {};
-		var xAPIlist = {};
-		for (i in intervals) {
-			start = parseFloat(intervals[i].split(",")[0]);
-			stop = parseFloat(intervals[i].split(",")[1]);
-			newDict = {};
-			for (j in attributes){
-				keys = Object.keys(attrDict[attributes[j]]);
-				for (k in keys){
-					if (keys[k]>=start && keys[k]<=stop) { 
-						if (!(attributes[j] in newDict)) {
-							newDict[attributes[j]] = {};
-						}
-						newDict[attributes[j]][keys[k]] = attrDict[attributes[j]][keys[k]];
-					}
-				}
-			}
-
-			// create xAPI 
-			timestamp = $("#inputTimestamp").val();
-			if (timestamp){
-				xAPIObject['timestamp'] = timestamp;
-			}
-			xAPIObject['stored'] = moment().format('YYYY-MM-DThh:mm:ss.SSS');
-			actor = $("#inputActor").val();
-			if (actor){
-				xAPIObject['actor'] = {};
-				xAPIObject['actor']['name'] = actor;
-			}
-			verb = $("#inputVerb").val();
-			if (verb){
-				xAPIObject['verb'] = {};
-				xAPIObject['verb']['id'] = verb;
-			}
-			object = $("#inputObject").val();
-			if (object){
-				xAPIObject['object'] = {};
-				xAPIObject['object']['id'] = object;
-			}
-			result = $("#inputResult").val();
-			if (result){
-				xAPIObject['result'] = {};
-				xAPIObject['result']['success'] = result;
-			}
-			authority = $("#inputAuthority").val();
-			if (authority){
-				xAPIObject['authority'] = authority;
-			}
-			contextExtentions = newDict;
-			if (contextExtentions){
-				xAPIObject['context'] = {};
-				xAPIObject['context']['extensions'] = contextExtentions;
-			}	
-			xAPItitle = 'xapi_'+intervals[i].replace(', ','-');
-			xAPIlist[xAPItitle] = xAPIObject;
-
-
+	// Export 
+	$("#attributesJSON").unbind().click(function () {
+		console.log("export JSON started");
+		if ($("input[name=annotationFPS]").val()){
+			annTf = 1/parseFloat($("input[name=annotationFPS]").val());
+		} else {
+			annTf = 0.5;
 		}
-		$("a#downloadJSON").html("Download JSON").attr("href","data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(xAPIlist, 0, 4)));
-
-	});*/
+	});
+	
 
 	// Sums the values of a dictionary
 	function sum( obj ) {
