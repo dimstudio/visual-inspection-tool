@@ -19,7 +19,8 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
 	<script src="js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="js/jszip.min.js"></script>
-	<script type="text/javascript" src="js/moment.js"></script>
+	<script type="text/javascript" src="js/moment.js"></script>	
+	<script type="text/javascript" src="js/FileSaver.min.js"></script>	
 	<script type="text/javascript" src="js/jszip-utils.min.js"></script>
 	<link rel="stylesheet" href="css/jquery.tree-multiselect.css">
 	<script type="text/javascript" src="js/jquery.tree-multiselect.min.js"></script>
@@ -64,7 +65,7 @@
 	  	<div class="col-sm-6" id="secondDiv">
 		  	<div class="panel panel-default">
 		  		<div class="panel-heading panel-footer">
-				    <h3 class="panel-title ">Session loader <small>use .zip files</small></h3>
+				    <h3 class="panel-title ">Session loader <small>Load only .zip files with fileformat of the <a href="https://github.com/janschneiderou/LearningHub" target:_blank>LearningHub</a></small></h3>
 				</div>
 			  	<div class="panel-body">	
 				  	<form>
@@ -81,7 +82,7 @@
 			<div class="col-sm-5" style="padding:0;">
 			    <div class="panel panel-default">
 				   	<div class="panel-heading panel-footer">
-					    <h3 class="panel-title ">Intervals</h3>
+					    <h3 class="panel-title ">Intervals <small>Resize the legend below the plot.</small></h3>
 					</div> 	
 					<div class="panel-body">
 					   	<input type="text" readonly class="form-control input-sm zoomInput" id="interval" placeholder="Zoom into the plot legend">
@@ -94,7 +95,7 @@
 			<div class="col-sm-7" style="padding-right:0;">
 				    <div class=" panel panel-default">
 				    	<div class="panel-heading panel-footer">
-						    <h3 class="panel-title ">Annotations</h3>
+						    <h3 class="panel-title ">Annotations <small>Select interval(s) edit values. 'Generate' once done.</small></h3>
 						</div>
 				    	<div class="panel-body">
 					    	<input type="text" class="form-control input-sm smallInput" id="inputKey" placeholder="Annotation label" required>
@@ -121,9 +122,9 @@
 						      </div>
 				    			<!--/counter-->
 				    			<button type="button" id="exportJSON" class="btn btn-primary btn-sm">Generate</button>
-				    			<a class="btn btn-default btn-sm" href="" download="annotations.json" id="downloadJSON" style="display: none;"></a>
-				    			<a class="btn btn-default btn-sm" href="" download="example.zip" id="downloadZIP" style="display: none;"></a>
-				    			<button type="button" id="plotJSON" class="btn btn-default btn-sm" style="display: none;">Plot</button>
+				    			<a class="btn btn-default btn-sm" href="" download="_annotations.json" id="downloadJSON" style="display: none;"><span class="glyphicons glyphicons-list-alt"></span> Json</a>
+				    			<a class="btn btn-default btn-sm" href="" download="example.zip" id="downloadZIP" style="display: none;"><span class="glyphicons glyphicons-compressed"></span> Zip</a>
+				    			<button type="button" id="plotJSON" class="btn btn-default btn-sm" style="display: none;"><span class="glyphicons glyphicons-charts"></span> Plot</button>
 				    		</div>
 				    	</div>
 				    </div>
@@ -176,7 +177,7 @@
 		$('#attrTreeSelect').find('option').remove();
 		treeAttributes.reload();
 		treeOnChange();
-		$("a#downloadJSON").html("").attr("href","").hide();
+		$("a#downloadJSON").attr("href","").hide();
 		$("#theVideo video").remove();
 		$("#theVideo").html("<video style='width:100%;' controls=''></video>");
 		$video = $("#theVideo video");
@@ -269,7 +270,7 @@
 				first = attr.substring(0,1);
 				last = attr.substring(attr.length-1);
 				if (sum(tempAttrDict[attr])!=0 && !isNaN(sum(tempAttrDict[attr]))){
-					if (applicationName=='Kinect' && parseFloat(first)>0){
+					if (applicationName=='Kinect' && parseFloat(first)>=0){
 						if (last=="X" || last=="Y" || last=="Z") { 
 							html = "<option value='"+attr+"' data-section='"+applicationName+"/"+first+"/"+attr.substring(1,attr.length-1)+"'>"+last+	"</option>";
 						} else {
@@ -281,7 +282,7 @@
 					}
 				} else if (stringObj(tempAttrDict[attr])) {
 					// Categoric e.g. feedback
-					if (applicationName=='Kinect' && parseFloat(first)>0){
+					if (applicationName=='Kinect' && parseFloat(first)>=0){
 						$("#attrTreeSelect").append("<option value='"+attr+"' data-section='"+applicationName+"/"+first+"'>"+attr.substring(1)+"</option>");
 					} else {
 						$("#attrTreeSelect").append("<option value='"+attr+"' data-section='"+applicationName+"'>"+attr+"</option>");
@@ -625,22 +626,22 @@
 			jsonFile = JSON.stringify(jsonObj, 0, 4);
 
 
-			/*JSZipUtils.getBinaryContent('YourWindowsApp.zip', function(err, data) {
-		      if(err) { throw err; 
-		      }
+			if ($("#theFile").length>0){
+ 				var $file = $("#theFile")[0].files[0];
+                var zip = new JSZip();
+                zip.loadAsync($file).then(function (zip) {
+                     zip.file("_annotations.json", jsonFile);
+                     var newZip = zip.generateAsync({type:"blob"}).then(function callback(blob) {	
+					        //saveAs(blob, sessionName.replace('.zip','_annotated.zip'));
+							$("a#downloadZIP").show().attr("href",URL.createObjectURL(blob)).attr("download",sessionName.replace('.zip','_annotated.zip'));
+					    }, function (e) {
+					        showError(e);
+					    });
+                });
+			}
 
-		      var zip = new JSZip(data);
-		      zip.file("Hello.txt", "Hello World\n");
-		      var folder = zip.folder("images");
-		      folder.file("folder.txt", "I'm a file in a new folder");
-		      var content = zip.generate({type:"blob"});
-		      // see FileSaver.js
-		      saveAs(content, "example.zip");
-		    });*/
-
-
-			$("a#downloadJSON").html("JSON").show().attr("href","data:text/json;charset=utf-8," + encodeURIComponent(jsonFile));
-			//$("a#downloadZIP").html("JSON").show().attr("href","data:application/x-zip-compressed;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonObj, 0, 4)));
+			$("a#downloadJSON").show().attr("href","data:text/json;charset=utf-8," + encodeURIComponent(jsonFile));
+			
 			$("#plotJSON").show();
 		}
 
@@ -649,6 +650,14 @@
 		    addToAttrDict(JSON.stringify(jsonObj));
 		    treeAttributes.reload();
 		});
+
+		$("#plotJSON").unbind().on('click', function (e) {
+		    e.preventDefault();
+		    addToAttrDict(JSON.stringify(jsonObj));
+		    treeAttributes.reload();
+		});
+
+
 	});
 	// Export 
 	$("#attributesJSON").unbind().click(function () {
