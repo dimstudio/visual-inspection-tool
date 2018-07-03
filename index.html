@@ -7,6 +7,7 @@
     <meta name="description" content="${2}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="shortcut icon" type="image/png" href="css/favicon.ico"/>
     <script src="js/modernizr.min.js"></script>
     <script src="js/plotly-latest.min.js"></script>
@@ -82,7 +83,7 @@
 			<div class="col-sm-5" style="padding:0;">
 			    <div class="panel panel-default">
 				   	<div class="panel-heading panel-footer">
-					    <h3 class="panel-title ">Intervals <small>Resize the legend below the plot.</small></h3>
+					    <h3 class="panel-title ">Intervals <small>Resize plot legend, add interval.</small></h3>
 					</div> 	
 					<div class="panel-body">
 					   	<input type="text" readonly class="form-control input-sm zoomInput" id="interval" placeholder="Zoom into the plot legend">
@@ -95,7 +96,7 @@
 			<div class="col-sm-7" style="padding-right:0;">
 				    <div class=" panel panel-default">
 				    	<div class="panel-heading panel-footer">
-						    <h3 class="panel-title ">Annotations <small>Select interval(s) edit values. 'Generate' once done.</small></h3>
+						    <h3 class="panel-title ">Annotations <small>Add label-value, Select intervals, Edit values.</small></h3>
 						</div>
 				    	<div class="panel-body">
 					    	<input type="text" class="form-control input-sm smallInput" id="inputKey" placeholder="Annotation label" required>
@@ -110,21 +111,21 @@
 						    	<div class="input-group" style="width:28%; float:left; margin-right:5px;">
 						          <span class="input-group-btn">
 						              <button type="button" class="btn btn-default btn-number btn-sm" disabled="disabled" data-type="minus" data-field="annotationFPS">
-						                  <span class="glyphicon glyphicon-minus"></span>
+						                  <i class="fa fa-minus"></i>
 						              </button>
 						          </span>
 						          <input type="text" name="annotationFPS" class="form-control input-number input-sm" value="1" min="1" max="25">
 						          <span class="input-group-btn">
 						              <button type="button" class="btn btn-default btn-number btn-sm" data-type="plus" data-field="annotationFPS">
-						                  <span class="glyphicon glyphicon-plus"></span>
+						                  <i class="fa fa-plus"></i>
 						              </button>
 						          </span>
 						      </div>
 				    			<!--/counter-->
-				    			<button type="button" id="exportJSON" class="btn btn-primary btn-sm">Generate</button>
-				    			<a class="btn btn-default btn-sm" href="" download="_annotations.json" id="downloadJSON" style="display: none;"><span class="glyphicons glyphicons-list-alt"></span> Json</a>
-				    			<a class="btn btn-default btn-sm" href="" download="example.zip" id="downloadZIP" style="display: none;"><span class="glyphicons glyphicons-compressed"></span> Zip</a>
-				    			<button type="button" id="plotJSON" class="btn btn-default btn-sm" style="display: none;"><span class="glyphicons glyphicons-charts"></span> Plot</button>
+				    			<button type="button" id="exportJSON" class="btn btn-primary btn-sm">Export</button>
+				    			<a class="btn btn-default btn-sm" href="" download="_annotations.json" id="downloadJSON" style="display: none;"><i class="fa fa-file-code-o"></i> Json</a>
+				    			<a class="btn btn-default btn-sm" href="" download="example.zip" id="downloadZIP" style="display: none;"><i class="fa fa-file-archive-o"></i> Zip</a>
+				    			<button type="button" id="plotJSON" class="btn btn-default btn-sm" style="display: none;"><i class="fa fa-line-chart"></i> Plot</button>
 				    		</div>
 				    	</div>
 				    </div>
