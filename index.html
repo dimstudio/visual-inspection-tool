@@ -21,6 +21,7 @@
 	<script src="js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="js/jszip.min.js"></script>
 	<script type="text/javascript" src="js/moment.js"></script>	
+	<script src="js/moment-duration-format.min.js"></script>
 	<script type="text/javascript" src="js/FileSaver.min.js"></script>	
 	<script type="text/javascript" src="js/jszip-utils.min.js"></script>
 	<link rel="stylesheet" href="css/jquery.tree-multiselect.css">
@@ -59,7 +60,7 @@
 		</div>
 		<div class="col-sm-4" >
 			<br />
-			<p class="small" style="text-align: right;">Version 1.3 - Credits: <a href="http://www.dimstudio.org" target="_blank">Daniele Di Mitri</a> - Open Universiteit (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>)</p>
+			<p class="small" style="text-align: right;">Version 1.4 - Credits: <a href="http://www.dimstudio.org" target="_blank">Daniele Di Mitri</a> - Open Universiteit (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>)</p>
 		</div>
 	</div>
 	<div class="row">
@@ -96,7 +97,7 @@
 			<div class="col-sm-7" style="padding-right:0;">
 				    <div class=" panel panel-default">
 				    	<div class="panel-heading panel-footer">
-						    <h3 class="panel-title ">Annotations <small>Add label-value, Select intervals, Edit values.</small></h3>
+						    <h3 class="panel-title ">Annotations <small>Add label-value, select intervals, edit values.</small></h3>
 						</div>
 				    	<div class="panel-body">
 					    	<input type="text" class="form-control input-sm smallInput" id="inputKey" placeholder="Annotation label" required>
@@ -123,9 +124,9 @@
 						      </div>
 				    			<!--/counter-->
 				    			<button type="button" id="exportJSON" class="btn btn-primary btn-sm">Export</button>
-				    			<a class="btn btn-default btn-sm" href="" download="_annotations.json" id="downloadJSON" style="display: none;"><i class="fa fa-file-code-o"></i> Json</a>
-				    			<a class="btn btn-default btn-sm" href="" download="example.zip" id="downloadZIP" style="display: none;"><i class="fa fa-file-archive-o"></i> Zip</a>
-				    			<button type="button" id="plotJSON" class="btn btn-default btn-sm" style="display: none;"><i class="fa fa-line-chart"></i> Plot</button>
+				    			<a class="btn btn-default btn-sm" href="" download="_annotations.json" id="downloadJSON" style="display: none;"><i class="fa fa-file-code-o"></i></a>
+				    			<a class="btn btn-default btn-sm" href="" download="example.zip" id="downloadZIP" style="display: none;"><i class="fa fa-file-archive-o"></i></a>
+				    			<button type="button" id="plotJSON" class="btn btn-default btn-sm" style="display: none;"><i class="fa fa-line-chart"></i></button>
 				    		</div>
 				    	</div>
 				    </div>
@@ -261,7 +262,7 @@
 				if (!(j in tempAttrDict)) {
 					tempAttrDict[j] = {};
 				}
-				tempAttrDict[j][json_object.frames[i].frameStamp.substring(6,12)] = json_object.frames[i].frameAttributes[j];
+				tempAttrDict[j][json_object.frames[i].frameStamp.substring(0,12)] = json_object.frames[i].frameAttributes[j];
 			}	
 		}
 		for (i in Object.keys(tempAttrDict)){
@@ -301,7 +302,6 @@
 			}
 
 		}
-		//$("#actionAttributes").html('<button type="button" id="attributesJSON" class="btn btn-primary right">JSON export</button>');
 
 	}
 
@@ -328,7 +328,7 @@
 					cols = $.map(attrDict[attr], function (value, key) { return value });
 				}
 				cols.unshift(attr);
-				rows = $.map(attrDict[attr], function (value, key) { return String(key)});
+				rows = $.map(attrDict[attr], function (value, key) { return toDurationS(key)});
 				max = rows[rows.length - 1];
 				if (max > keyMax) {
 					keyMax = max;
@@ -339,7 +339,7 @@
 				xs[attr] = attr + '_x';
 			} else if (stringObj(attrDict[attr])) {
 				// String time series (e.g. feedback)
-				rows = $.map(attrDict[attr], function (value, key) { return String(key)});
+				rows = $.map(attrDict[attr], function (value, key) { return toDurationS(key)});
 				rows.unshift(attr + '_x');
 				values = $.map(attrDict[attr], function (value, key) { return "0" });
 				values.unshift(attr);
@@ -349,11 +349,10 @@
 			}	
 		}
 		var xAxisTicks = [];
-		var xscale = 5;
 		if (keyMax > 0) {
-			q = Math.floor(keyMax / xscale);
-			for (i = 0; i <= (q * xscale); i = i + xscale) {
-				xAxisTicks.push(i);
+			q = keyMax / 20;
+			for (i = 0; i <= 20; i =i+1) {
+				xAxisTicks.push(q*(i+1));
 			}
 
 		}
@@ -364,7 +363,7 @@
 			bindto: '#plotGraph',
 			data: {
 				xs: xs,
-				xFormat: '%S.%L',
+				xFormat: '%S.%L',//'%H:%M:%S.%L'	,
 				columns: columns,
 				onclick: function (id) {
 					$("#theVideo video")[0].currentTime=id.x;
@@ -391,12 +390,15 @@
 				}
 			},
 			axis: {
-				x: {
+					x: {
+						//type: 'timeseries',
 					tick: {
+						format: function(x) {
+					            return moment.duration(x, 'seconds').format("hh:mm:ss");
+					        },	
 						values: xAxisTicks
 					},
-					label: "Time (s)",
-					min: 0
+					label: "Time (s)"
 				},
 				y: {
 					tick: {
@@ -413,7 +415,7 @@
 			tooltip: {
 		        grouped: false,
 		        format: {
-		        	title: function (d) { return d +'s'; },
+		        	title: function (d) { return  moment.duration(d, 'seconds').format("hh:mm:ss.SSS"); },
 		        	value: function (value, ratio, id, index) {
 			            return attrDict[id][Object.keys(attrDict[id])[index]];
 			        }
@@ -462,7 +464,7 @@
 			var arr = $("#interval").val().split(", "),
 				begin = arr[0], stop = arr[1];
 			regions.push({ axis: 'x', start: begin, end: stop, class: 'rated' });
-			$("#intervalList").append("<option value='"+begin+", "+stop+"' data-section='intervals'>"+begin+"s to "+stop+"s</option>");
+			$("#intervalList").append("<option value='"+begin+", "+stop+"' data-section='intervals'>"+ moment.duration(parseFloat(begin), 'seconds').format("hh:mm:ss.SSS")+" to "+moment.duration(parseFloat(stop), 'seconds').format("hh:mm:ss.SSS")+"</option>");
 			intervalList.reload();
 			chart.regions(regions);	
 		}
@@ -501,10 +503,11 @@
 		for (i in allSelectedItems){
 			inter = allSelectedItems[i].value;
 			for (k in regions){
-				if (regions[k].start == inter.split(', ')[0] && regions[k].end == inter.split(', ')[1]){			regions[k].class = "selected";
+				if (regions[k].start == inter.split(', ')[0] && regions[k].end == inter.split(', ')[1]){
+					regions[k].class = "selected";
 			        for (j in keys){
 			        	if (regions[k].hasOwnProperty(keys[j])) {			
-			        		if (!temp.hasOwnProperty(keys[j])) temp[keys[j]] = regions[k][keys[j]];
+			        		if (!temp.hasOwnProperty(keys[j])) temp[keys[j]] = regions[k][keys[j]];		
 			        		if (regions[k][keys[j]] == temp[keys[j]]){
 			        			$("input[name=inputKeyList][value="+keys[j]+"]").next().val(temp[keys[j]]);
 			        		} else {
@@ -512,10 +515,10 @@
 			        		}
 			        	} else if (temp.hasOwnProperty(keys[j])){
 			        		$("input[name=inputKeyList][value="+keys[j]+"]").next().val('').attr('placeholder','?');
-			        	} else {
-			        		temp[keys[j]] = '';
-			        	}
-			        } 
+			        	} 
+			        	temp[keys[j]] = regions[k][keys[j]]; 
+			        }
+			        
 			    }
 			}
 		}
@@ -573,7 +576,7 @@
 		var temp = false; 
 		var inter;
 		var jsonObj = {};
-		var annObj = [];
+		var annObj = [];	
 		var annTf;
 		//var attrkeys;
 
@@ -601,19 +604,6 @@
 						}
 					}
 				}
-				// Add to the JSON object also the selected attributes
-				/*for (a in attributes){
-					attrkeys = Object.keys(attrDict[attributes[a]]);
-					for (b in attrkeys){
-						if (attrkeys[b]>=i*annTf && attrkeys[b]<(i+1)*annTf) { 
-							if (!annotationList.hasOwnProperty(attributes[a])){
-								annotationList[attributes[a]] = attrDict[attributes[a]][attrkeys[b]];
-							} //else if(!isNaN(annotationList[attributes[a]]) && !isNaN(attrDict[attributes[a]][attrkeys[b]])) { 
-								//annotationList[attributes[a]] = (annotationList[attributes[a]] + attrDict[attributes[a]][attrkeys[b]])/2;
-							//}
-						}
-					}
-				}*/
 				annObj.push({
 					frameStamp: moment.utc(i*annTf*1000).format('HH:mm:ss.SSS'),
 					frameAttributes: annotationList
@@ -625,7 +615,6 @@
 			jsonObj["applicationName"] = "Annotations";
 			jsonObj["frames"] = annObj;
 			jsonFile = JSON.stringify(jsonObj, 0, 4);
-
 
 			if ($("#theFile").length>0){
  				var $file = $("#theFile")[0].files[0];
@@ -700,7 +689,7 @@
 
 	// Get the max key of a dicotionary
 	function getMax(obj) {
-	  return Math.max.apply(null,Object.keys(obj));
+	  return Math.max.apply(null,(Object.keys(obj).map(toDurationS)));
 	}
 	
 	// merge 2 lists into dictionary
@@ -709,6 +698,18 @@
 	    for (var i = 0; i < names.length; i++)
 	         result[names[i]] = values[i];
 	    return result;
+	}
+
+	function toDurationS(time){
+		var result = 0;	
+		var spl = time.split(':');
+		if (spl.length == 3) {
+			result =  parseFloat(spl[2]) + parseFloat(spl[1]) * 60 + parseFloat(spl[0]) * 3600;
+		}
+		else {
+			console.log("Invalid time format in toDurationS ")
+		}
+		return result;
 	}
 
   </script>
