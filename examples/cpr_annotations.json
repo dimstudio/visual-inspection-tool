@@ -1,0 +1,862 @@
+[
+    {
+        "compReleaseDepth": "1.5", 
+        "end": "0.62", 
+        "classDepth": "0", 
+        "classRate": "1", 
+        "start": "0.0", 
+        "compMeanRate": "110", 
+        "compDepth": "58.0999985", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "3", 
+        "end": "1.34", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "0.66", 
+        "compMeanRate": "94", 
+        "compDepth": "57.1399994", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "2.5", 
+        "end": "2.1", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "1.42", 
+        "compMeanRate": "89", 
+        "compDepth": "57.1399994", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "2.5", 
+        "end": "2.87", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "2.21", 
+        "compMeanRate": "79", 
+        "compDepth": "58.5699997", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "3.5", 
+        "end": "3.65", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "2.97", 
+        "compMeanRate": "77", 
+        "compDepth": "55.2399979", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "1.5", 
+        "end": "4.45", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "3.78", 
+        "compMeanRate": "76", 
+        "compDepth": "53.8600006", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "0.5", 
+        "end": "5.17", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "4.49", 
+        "compMeanRate": "81", 
+        "compDepth": "62.2700005", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "2.5", 
+        "end": "6.65", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "5.97", 
+        "compMeanRate": "85", 
+        "compDepth": "56.1899986", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "2", 
+        "end": "7.4", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "6.78", 
+        "compMeanRate": "84", 
+        "compDepth": "59.0499992", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "0", 
+        "end": "8.17", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "7.52", 
+        "compMeanRate": "86", 
+        "compDepth": "61.5900002", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "2.5", 
+        "end": "8.96", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "8.29", 
+        "compMeanRate": "78", 
+        "compDepth": "59.2899971", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "5.27999973", 
+        "end": "9.72", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "9.09", 
+        "compMeanRate": "78", 
+        "compDepth": "63.1800003", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "2.5", 
+        "end": "10.52", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "9.85", 
+        "compMeanRate": "77", 
+        "compDepth": "62.7299995", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "2.5", 
+        "end": "11.28", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "10.64", 
+        "compMeanRate": "79", 
+        "compDepth": "61.8199997", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "2.5", 
+        "end": "12.06", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "11.37", 
+        "compMeanRate": "78", 
+        "compDepth": "62.7299995", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "4.5", 
+        "end": "12.9", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "12.17", 
+        "compMeanRate": "77", 
+        "compDepth": "60.9099998", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "5", 
+        "end": "13.75", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "13.03", 
+        "compMeanRate": "75", 
+        "compDepth": "62.5", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "4.5", 
+        "end": "14.32", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "13.8", 
+        "compMeanRate": "75", 
+        "compDepth": "63.1800003", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "4.5", 
+        "end": "14.98", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "14.46", 
+        "compMeanRate": "81", 
+        "compDepth": "62.7299995", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "5.82999992", 
+        "end": "15.55", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "15.05", 
+        "compMeanRate": "92", 
+        "compDepth": "62.2700005", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "4.5", 
+        "end": "16.13", 
+        "classDepth": "0", 
+        "classRate": "1", 
+        "start": "15.6", 
+        "compMeanRate": "101", 
+        "compDepth": "62.7299995", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "4", 
+        "end": "16.77", 
+        "classDepth": "0", 
+        "classRate": "1", 
+        "start": "16.19", 
+        "compMeanRate": "103", 
+        "compDepth": "59.0499992", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "3.5", 
+        "end": "17.44", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "16.82", 
+        "compMeanRate": "98", 
+        "compDepth": "58.329998", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "4.5", 
+        "end": "18.08", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "17.5", 
+        "compMeanRate": "93", 
+        "compDepth": "61.3599968", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "4.5", 
+        "end": "18.76", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "18.16", 
+        "compMeanRate": "90", 
+        "compDepth": "59.0499992", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "5", 
+        "end": "19.72", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "18.84", 
+        "compMeanRate": "88", 
+        "compDepth": "55.2399979", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "5.82999992", 
+        "end": "20.45", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "19.83", 
+        "compMeanRate": "77", 
+        "compDepth": "47.3799973", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "6.94000006", 
+        "end": "21.12", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "20.58", 
+        "compMeanRate": "79", 
+        "compDepth": "60.4499969", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "5", 
+        "end": "21.64", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "21.16", 
+        "compMeanRate": "85", 
+        "compDepth": "61.8199997", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "5.55999994", 
+        "end": "22.23", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "21.75", 
+        "compMeanRate": "98", 
+        "compDepth": "60.4499969", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "5", 
+        "end": "22.8", 
+        "classDepth": "0", 
+        "classRate": "1", 
+        "start": "22.31", 
+        "compMeanRate": "101", 
+        "compDepth": "62.7299995", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "6.38999987", 
+        "end": "23.46", 
+        "classDepth": "1", 
+        "classRate": "1", 
+        "start": "22.92", 
+        "compMeanRate": "100", 
+        "compDepth": "59.7599983", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "5.82999992", 
+        "end": "24.04", 
+        "classDepth": "1", 
+        "classRate": "1", 
+        "start": "23.54", 
+        "compMeanRate": "100", 
+        "compDepth": "62.2700005", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "6.67000008", 
+        "end": "24.7", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "24.17", 
+        "compMeanRate": "97", 
+        "compDepth": "58.0999985", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "6.10999966", 
+        "end": "25.32", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "24.8", 
+        "compMeanRate": "98", 
+        "compDepth": "61.3599968", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "5.82999992", 
+        "end": "25.95", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "25.4", 
+        "compMeanRate": "95", 
+        "compDepth": "58.329998", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "5", 
+        "end": "26.6", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "26.04", 
+        "compMeanRate": "97", 
+        "compDepth": "61.3599968", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "6.38999987", 
+        "end": "27.21", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "26.65", 
+        "compMeanRate": "95", 
+        "compDepth": "59.0499992", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "6.10999966", 
+        "end": "27.83", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "27.3", 
+        "compMeanRate": "95", 
+        "compDepth": "60", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "6.38999987", 
+        "end": "28.45", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "27.9", 
+        "compMeanRate": "95", 
+        "compDepth": "60.9099998", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "6.38999987", 
+        "end": "29.08", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "28.52", 
+        "compMeanRate": "97", 
+        "compDepth": "59.5200005", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "10", 
+        "end": "29.77", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "29.15", 
+        "compMeanRate": "96", 
+        "compDepth": "55.2399979", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "8.05999947", 
+        "end": "30.36", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "29.8", 
+        "compMeanRate": "93", 
+        "compDepth": "51.8199997", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "8.05999947", 
+        "end": "31.01", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "30.48", 
+        "compMeanRate": "92", 
+        "compDepth": "53.6399994", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "8.32999992", 
+        "end": "31.63", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "31.12", 
+        "compMeanRate": "93", 
+        "compDepth": "54.3199997", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "8.88999939", 
+        "end": "32.29", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "31.73", 
+        "compMeanRate": "95", 
+        "compDepth": "50.4500008", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "9.17000008", 
+        "end": "32.9", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "32.35", 
+        "compMeanRate": "96", 
+        "compDepth": "51.5900002", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "9.43999958", 
+        "end": "33.59", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "32.99", 
+        "compMeanRate": "93", 
+        "compDepth": "47.8600006", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "9.71999931", 
+        "end": "34.23", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "33.65", 
+        "compMeanRate": "92", 
+        "compDepth": "49.5200005", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "10.2600002", 
+        "end": "34.83", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "34.29", 
+        "compMeanRate": "91", 
+        "compDepth": "47.8600006", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "10", 
+        "end": "35.48", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "34.93", 
+        "compMeanRate": "92", 
+        "compDepth": "45.9500008", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "9.17000008", 
+        "end": "36.16", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "35.56", 
+        "compMeanRate": "93", 
+        "compDepth": "46.8999977", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "8.88999939", 
+        "end": "36.79", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "36.22", 
+        "compMeanRate": "94", 
+        "compDepth": "56.4300003", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "10.2600002", 
+        "end": "37.43", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "36.85", 
+        "compMeanRate": "95", 
+        "compDepth": "56.1899986", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "5.82999992", 
+        "end": "38.13", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "37.54", 
+        "compMeanRate": "92", 
+        "compDepth": "50.2299995", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "7.77999973", 
+        "end": "38.72", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "38.23", 
+        "compMeanRate": "90", 
+        "compDepth": "53.6399994", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "11.8400002", 
+        "end": "39.28", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "38.75", 
+        "compMeanRate": "97", 
+        "compDepth": "49.5200005", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "12.6300001", 
+        "end": "39.92", 
+        "classDepth": "0", 
+        "classRate": "1", 
+        "start": "39.35", 
+        "compMeanRate": "100", 
+        "compDepth": "48.8099976", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "18.5", 
+        "end": "40.54", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "40.02", 
+        "compMeanRate": "99", 
+        "compDepth": "43.5", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "20.2399998", 
+        "end": "41.81", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "41.05", 
+        "compMeanRate": "80", 
+        "compDepth": "36", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "11.3199997", 
+        "end": "42.66", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "41.91", 
+        "compMeanRate": "71", 
+        "compDepth": "39", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "9.17000008", 
+        "end": "43.36", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "42.72", 
+        "compMeanRate": "67", 
+        "compDepth": "49.7599983", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "9.17000008", 
+        "end": "44.0", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "43.44", 
+        "compMeanRate": "77", 
+        "compDepth": "51.1399994", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "8.05999947", 
+        "end": "44.76", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "44.11", 
+        "compMeanRate": "80", 
+        "compDepth": "45.9500008", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "6.94000006", 
+        "end": "45.48", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "44.83", 
+        "compMeanRate": "85", 
+        "compDepth": "50", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "6.94000006", 
+        "end": "46.12", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "45.54", 
+        "compMeanRate": "84", 
+        "compDepth": "53.4099998", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "6.67000008", 
+        "end": "46.8", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "46.2", 
+        "compMeanRate": "90", 
+        "compDepth": "57.8600006", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "10", 
+        "end": "47.5", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "46.83", 
+        "compMeanRate": "90", 
+        "compDepth": "47.8600006", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "10.79", 
+        "end": "48.26", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "47.56", 
+        "compMeanRate": "88", 
+        "compDepth": "46.6699982", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "9.43999958", 
+        "end": "49.01", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "48.33", 
+        "compMeanRate": "81", 
+        "compDepth": "45.9500008", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "8.05999947", 
+        "end": "49.72", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "49.06", 
+        "compMeanRate": "80", 
+        "compDepth": "44", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "10.5299997", 
+        "end": "50.44", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "49.79", 
+        "compMeanRate": "80", 
+        "compDepth": "45.9500008", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "10.2600002", 
+        "end": "51.12", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "50.5", 
+        "compMeanRate": "84", 
+        "compDepth": "45.2399979", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "7.21999979", 
+        "end": "51.8", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "51.18", 
+        "compMeanRate": "86", 
+        "compDepth": "45", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "8.05999947", 
+        "end": "52.41", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "51.86", 
+        "compMeanRate": "89", 
+        "compDepth": "55.2399979", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "6.38999987", 
+        "end": "53.09", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "52.51", 
+        "compMeanRate": "90", 
+        "compDepth": "54.0900002", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "7.5", 
+        "end": "53.76", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "53.17", 
+        "compMeanRate": "91", 
+        "compDepth": "53.1800003", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "6.94000006", 
+        "end": "54.44", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "53.82", 
+        "compMeanRate": "91", 
+        "compDepth": "54.3199997", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "5.27999973", 
+        "end": "55.07", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "54.47", 
+        "compMeanRate": "92", 
+        "compDepth": "59.7599983", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "6.38999987", 
+        "end": "55.66", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "55.11", 
+        "compMeanRate": "94", 
+        "compDepth": "62.9499969", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "5", 
+        "end": "56.3", 
+        "classDepth": "0", 
+        "classRate": "0", 
+        "start": "55.74", 
+        "compMeanRate": "95", 
+        "compDepth": "62.0499992", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "6.10999966", 
+        "end": "56.92", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "56.35", 
+        "compMeanRate": "95", 
+        "compDepth": "56.1899986", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "5.27999973", 
+        "end": "57.52", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "56.97", 
+        "compMeanRate": "96", 
+        "compDepth": "52.5", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "5.55999994", 
+        "end": "58.15", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "57.58", 
+        "compMeanRate": "97", 
+        "compDepth": "54.0900002", 
+        "classRelease": "1"
+    }, 
+    {
+        "compReleaseDepth": "6.38999987", 
+        "end": "58.77", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "58.21", 
+        "compMeanRate": "95", 
+        "compDepth": "49.0499992", 
+        "classRelease": "0"
+    }, 
+    {
+        "compReleaseDepth": "6.94000006", 
+        "end": "59.43", 
+        "classDepth": "1", 
+        "classRate": "0", 
+        "start": "58.86", 
+        "compMeanRate": "94", 
+        "compDepth": "48.8099976", 
+        "classRelease": "0"
+    }
+]

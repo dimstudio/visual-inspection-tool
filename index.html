@@ -49,88 +49,126 @@
 		#keyValuePairList {display: inline-block; width: 100%;}
 		#keyValuePairList label {display: block; float: left; width: 36%; font-weight: 700; padding: 10px 0 0;}
 		div.deleteKeyValueLink { margin-top: 10px; float: right;}
+		#sessionFileList {margin-top:10px;}
+		#sessionFileList ul {margin-bottom:0px;}
+		#inputGroupAnnotations, #inputGroupManualSensor {clear:both; text-align: right; display: none;}
+		#inputGroupAnnotations label, #inputGroupManualSensor label {float:left; margin-right: 5px}
 	</style>
 </head>
 <body>
 <div id="wrapper">
 
-	<div class="row" style="padding-left:20px;"	>
+	<div class="row">
 		<div class="col-sm-8">
 	  		<h3>Visual Inspection tool <small>Multimodal data dasbhoard</small></h3>
 		</div>
 		<div class="col-sm-4" >
 			<br />
-			<p class="small" style="text-align: right;">Version 1.4 - Credits: <a href="http://www.dimstudio.org" target="_blank">Daniele Di Mitri</a> - Open Universiteit (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>)</p>
+			<p class="small" style="text-align: right;">Version 1.5 - Credits: <a href="http://www.dimstudio.org" target="_blank">Daniele Di Mitri</a> - Open Universiteit (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>)</p>
 		</div>
 	</div>
 	<div class="row">
 	  	<div class="col-sm-6" id="secondDiv">
-		  	<div class="panel panel-default">
-		  		<div class="panel-heading panel-footer">
-				    <h3 class="panel-title ">Session loader <small>Load only .zip files with fileformat of the <a href="https://github.com/janschneiderou/LearningHub" target:_blank>LearningHub</a></small></h3>
-				</div>
-			  	<div class="panel-body">	
-				  	<form>
-					  	<div class="row">
-						    <div class="col-sm-6" >
-						      <input type="file" id="theFile"  class="custom-file-input"> 
-						    </div>
-							<div id="theFileList" class="col-sm-6"></div>
-							
+	  		<div class="row">
+		  		<div class="col-sm-6" style="padding:0;">
+				  	<div class="panel panel-default">
+				  		<div class="panel-heading panel-footer">
+						    <h3 class="panel-title ">Load session <small>Only .zip files <a href="https://github.com/janschneiderou/LearningHub" target:_blank>LearningHub</a></small></h3>
 						</div>
-					</form>
+					  	<div class="panel-body">	
+						  	<form>
+							  	<div class="row">
+								    <div class="col-sm-6" >
+								      <input type="file" id="sessionFile"  class="custom-file-input"> 
+								      <div id="sessionFileList" class="small">
+								      </div>
+								    </div>
+									<div class="col-sm-6"></div>
+									
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6" style="padding-right:0;">
+				  	<div class="panel panel-default">
+				  		<div class="panel-heading panel-footer">
+						    <h3 class="panel-title ">Load annotations <small>_annotations.json</small></h3>
+						</div>
+					  	<div class="panel-body">	
+						  	<form>
+							  	<div class="row">
+								    <div class="col-sm-6" >
+								      <input type="file" id="annotationFile"  class="custom-file-input"> 
+								    </div>
+									
+								</div>
+							</form>
+						</div>
+					</div>
 				</div>
 			</div>
-			<div class="col-sm-5" style="padding:0;">
-			    <div class="panel panel-default">
-				   	<div class="panel-heading panel-footer">
-					    <h3 class="panel-title ">Intervals <small>Resize plot legend, add interval.</small></h3>
-					</div> 	
-					<div class="panel-body">
-					   	<input type="text" readonly class="form-control input-sm zoomInput" id="interval" placeholder="Zoom into the plot legend">
-					    <button type="button" id="addinterval" class="btn btn-success btn-sm">Add</button>
-					    <button type="button" class="btn btn-danger btn-sm" id="delete-button">Delete</button>
-					    <select id="intervalList"></select>
+			<div class="row">
+				<div class="col-sm-5" style="padding:0;">
+				    <div class="panel panel-default">
+					   	<div class="panel-heading panel-footer">
+						    <h3 class="panel-title ">Edit intervals <small>Resize plot legend, add interval.</small></h3>
+						</div> 	
+						<div class="panel-body">
+						   	<input type="text" readonly class="form-control input-sm zoomInput" id="interval" placeholder="Zoom into the plot legend">
+						    <button type="button" id="addinterval" class="btn btn-success btn-sm">Add</button>
+						    <button type="button" class="btn btn-danger btn-sm" id="delete-button">Delete</button>
+						    <select id="intervalList"></select>
+					    </div>
 				    </div>
-			    </div>
-			</div>
-			<div class="col-sm-7" style="padding-right:0;">
-				    <div class=" panel panel-default">
-				    	<div class="panel-heading panel-footer">
-						    <h3 class="panel-title ">Annotations <small>Add label-value, select intervals, edit values.</small></h3>
-						</div>
-				    	<div class="panel-body">
-					    	<input type="text" class="form-control input-sm smallInput" id="inputKey" placeholder="Annotation label" required>
-					    	<input type="text" class="form-control input-sm smallInput" id="inputDefaultValue" placeholder="Defualt value" required>
-					    	<button type="button" id="addKeyValuePair" class="btn btn-success btn-sm">Add</button> 			
-					    	<form id="keyValuePairForm">
-				    			<div id="keyValuePairList"></div>
-				    		</form>
-				    		<div>
-				    			<!--Counter-->
-				    			<div><label for="annotationFPS" style="float:left; margin-right: 5px">Fps</label></div>
-						    	<div class="input-group" style="width:28%; float:left; margin-right:5px;">
-						          <span class="input-group-btn">
-						              <button type="button" class="btn btn-default btn-number btn-sm" disabled="disabled" data-type="minus" data-field="annotationFPS">
-						                  <i class="fa fa-minus"></i>
-						              </button>
-						          </span>
-						          <input type="text" name="annotationFPS" class="form-control input-number input-sm" value="1" min="1" max="25">
-						          <span class="input-group-btn">
-						              <button type="button" class="btn btn-default btn-number btn-sm" data-type="plus" data-field="annotationFPS">
-						                  <i class="fa fa-plus"></i>
-						              </button>
-						          </span>
-						      </div>
-				    			<!--/counter-->
-				    			<button type="button" id="exportJSON" class="btn btn-primary btn-sm">Export</button>
-				    			<a class="btn btn-default btn-sm" href="" download="_annotations.json" id="downloadJSON" style="display: none;"><i class="fa fa-file-code-o"></i></a>
-				    			<a class="btn btn-default btn-sm" href="" download="example.zip" id="downloadZIP" style="display: none;"><i class="fa fa-file-archive-o"></i></a>
-				    			<button type="button" id="plotJSON" class="btn btn-default btn-sm" style="display: none;"><i class="fa fa-line-chart"></i></button>
-				    		</div>
-				    	</div>
-				    </div>
-			</div>			  		
+				</div>
+				<div class="col-sm-7" style="padding-right:0;">
+					    <div class=" panel panel-default">
+					    	<div class="panel-heading panel-footer">
+							    <h3 class="panel-title ">Edit annotations <small>Add label-value, select intervals, edit values.</small></h3>
+							</div>
+					    	<div class="panel-body">
+						    	<input type="text" class="form-control input-sm smallInput" id="inputKey" placeholder="Annotation label" required>
+						    	<input type="text" class="form-control input-sm smallInput" id="inputDefaultValue" placeholder="Defualt value" required>
+						    	<button type="button" id="addAnnotationKey" class="btn btn-success btn-sm">Add</button> 			
+						    	<form id="keyValuePairForm">
+					    			<div id="keyValuePairList"></div>
+					    		</form>
+					    		<div>
+						    		<div>
+						    			<label for="annotationFPS" style="float:left; margin-right: 10px">Fps</label>
+									    <div class="input-group" style="width:28%; float:left; margin-right:5px; margin-bottom: 5px;"><!--Counter-->
+									        <span class="input-group-btn">
+									              <button type="button" class="btn btn-default btn-number btn-sm" disabled="disabled" data-type="minus" data-field="annotationFPS">
+									                  <i class="fa fa-minus"></i>
+									              </button>
+									        </span>
+									          <input type="text" name="annotationFPS" class="form-control input-number input-sm" value="1" min="1" max="25">
+									       	<span class="input-group-btn">
+									              <button type="button" class="btn btn-default btn-number btn-sm" data-type="plus" data-field="annotationFPS">
+									                  <i class="fa fa-plus"></i>
+									              </button>
+									        </span>
+								    	</div>
+					    				<!--/counter-->
+				    					<button type="button" id="exportJSON" class="btn btn-primary btn-sm" style="float:right">Export</button>
+						       	    </div>
+						    		<div id="inputGroupManualSensor">
+						    			<label>Manual sensor</label>
+						    			<button type="button" id="plotJSON" class="btn btn-default btn-sm"><i class="fa fa-line-chart"></i> Plot</button>
+						    			<a class="btn btn-default btn-sm" href="" download="manual_sensor.json" id="dwnJSONmanualsensor"><i class="fa fa-file-code-o"></i> Json</a>
+						    			<a class="btn btn-default btn-sm" href="" download="example.zip" id="dwnZIPmanualsensor" ><i class="fa fa-file-archive-o"></i> Zip</a>
+						    		</div>
+						    		<div id="inputGroupAnnotations" >
+						    			<label>Annotations</label>
+						    			<a class="btn btn-default btn-sm" href="" download="_annotations.json" id="dwnJSONAnnotations"><i class="fa fa-file-code-o"></i> Json</a>
+						    			<a class="btn btn-default btn-sm" href="" download="example.zip" id="dwnZIPannotations"><i class="fa fa-file-archive-o"></i> Zip</a>
+						    		</div>
+					    		</div>
+					    	</div>
+					    </div>
+				</div>	
+			</div>		  		
 	  		<div class="row">
 		  		
 		  	</div>
@@ -139,7 +177,7 @@
 		</div>
 	</div>	
 	<div class="row">	
-		<div class="col-sm-2" >
+		<div class="col-sm-2" style="padding-left:0;">
 			<div class="panel panel-default">
 				<div class="panel-heading panel-footer">
 					 <h3 class="panel-title" style="float: left; margin-right: 10px;">Attribute list</h3> <small><input type="checkbox" id="attrNormalize" />&nbsp;&nbsp;[-1, 1]</small>
@@ -161,7 +199,7 @@
 <script>
  
 	// globalValues 
-	var $result = $("#theFileList");
+	var $result = $("#sessionFileList");
 	var $video;
 	var attrDict; 
 	var regions;
@@ -169,7 +207,7 @@
 	var annTf = 0.5; // annotatoom timeframe
 	var sessionName; 
 
-	$("#theFile").on("change", function (evt) {
+	$("#sessionFile").on("change", function (evt) {
 		// remove content
 		$result.html("");
 		attrDict = {};
@@ -179,7 +217,8 @@
 		$('#attrTreeSelect').find('option').remove();
 		treeAttributes.reload();
 		treeOnChange();
-		$("a#downloadJSON").attr("href","").hide();
+		$("a#dwnJSONmanualsensor").attr("href","");
+		$("a#dwnJSONAnnotations").attr("href","");
 		$("#theVideo video").remove();
 		$("#theVideo").html("<video style='width:100%;' controls=''></video>");
 		$video = $("#theVideo video");
@@ -293,7 +332,6 @@
 			}
 		}
 		attrDict = Object.assign(attrDict, tempAttrDict);
-		//console.log(JSON.stringify(attrDict));
 		
 		// Determine max time-length (max key for each attribute in the attrDict)
 		for (i in attrDict){
@@ -527,13 +565,21 @@
 	}
 
 
-	$("#addKeyValuePair").unbind().click(function () {
+	$("#addAnnotationKey").unbind().click(function () {
 		var key = $("#inputKey").val();
-		var dValue = $("#inputDefaultValue").val();
-		if (key) {
-			$("#keyValuePairList").append('<div class="keyValuePair"><label>'+key+'</label><input type="hidden" name="inputKeyList" value="'+key+'" /><input type="text" class="form-control input-sm smallInput" name="inputValueList" placeholder="Add value"/> <input type="hidden" name="inputValueDefault" value="'+dValue+'" /><div class="deleteKeyValueLink small">'+dValue+' (default) <a href="#" class="deleteKeyValuePair">[X]</a></div></div>');
-			$("#inputKey").val('').removeAttr('value');
-			$("#inputDefaultValue").val('').removeAttr('value');
+		var dValue = $("#inputDefaultValue").val(); // TODO there will be no DValue
+		if (key && key!='axis' && key!='start' && key!='end' && key!='class') {
+			if ($("input[name=inputKeyList][value="+key+"]").length>0){
+				alert('Key already exists in the annotation list.');
+			}
+			else {
+				$("#keyValuePairList").append('<div class="keyValuePair"><label>'+key+'</label><input type="hidden" name="inputKeyList" value="'+key+'" /><input type="text" class="form-control input-sm smallInput" name="inputValueList" placeholder="Add value"/> <input type="hidden" name="inputValueDefault" value="'+dValue+'" /><div class="deleteKeyValueLink small">'+dValue+' (default) <a href="#" class="deleteKeyValuePair">[X]</a></div></div>');
+				$("#inputKey").val('').removeAttr('value');
+				$("#inputDefaultValue").val('').removeAttr('value');
+			}
+
+		} else {
+			alert('Key invalid. Forbidden key names are start, end, class, axis.')
 		}
 
 		$("a.deleteKeyValuePair").unbind().on('click', function (e) {
@@ -580,7 +626,7 @@
 		var annTf;
 		//var attrkeys;
 
-		// JSON export with attributes 25/06/18
+		// Manual sensor -> manual_sensor.json
 		var attributes = $("#attrTreeSelect").val();
 		if ($("input[name=annotationFPS]").val()){
 			annTf = 1/parseFloat($("input[name=annotationFPS]").val());
@@ -593,11 +639,15 @@
 		if (!$.isEmptyObject(annotationList)){
 			for (var i = 0; i < annObjLen/annTf; i++) {
 				for (k in regions){
-					if(regions[k].class='selected' && temp == false){
+					if(regions[k].class=='selected' && temp == false){
 						if (i*annTf>=parseFloat(regions[k].start) && i*annTf<=parseFloat(regions[k].end)){
 							for (j in keys){
 								if (regions[k].hasOwnProperty(keys[j])){
-									annotationList[keys[j]] = regions[k][keys[j]];
+									if (regions[k][keys[j]]!=""){
+										annotationList[keys[j]] = regions[k][keys[j]];
+									} else {
+										annotationList[keys[j]] = values[j];
+									}
 									temp = true;
 								}
 							}
@@ -612,34 +662,52 @@
 				annotationList = toObject(keys,values);
 			}
 			jsonObj["recordingID"] = sessionName;
-			jsonObj["applicationName"] = "Annotations";
+			jsonObj["applicationName"] = "ManualSensor";
 			jsonObj["frames"] = annObj;
-			jsonFile = JSON.stringify(jsonObj, 0, 4);
+			jsonFileManualSensor = JSON.stringify(jsonObj, 0, 4);
 
-			if ($("#theFile").length>0){
- 				var $file = $("#theFile")[0].files[0];
+			// Regions -> _annotations.json
+			//Discard the axis and class properties
+			var jsObjRegions = [];
+			for(r in regions) {
+				var reg = {};
+				for (k in regions[r]){
+					if(k != 'axis' && k != 'class') {
+                		reg[k] = regions[r][k];
+        			}
+				}
+        		jsObjRegions.push(reg);
+			}
+			jsonFileAnnotations = JSON.stringify(jsObjRegions, 0, 4)
+
+			if ($("#sessionFile").length>0){
+ 				var $file = $("#sessionFile")[0].files[0];
                 var zip = new JSZip();
                 zip.loadAsync($file).then(function (zip) {
-                     zip.file("_annotations.json", jsonFile);
+                     zip.file("manual_sensor.json", jsonFileManualSensor);
                      var newZip = zip.generateAsync({type:"blob"}).then(function callback(blob) {	
-					        //saveAs(blob, sessionName.replace('.zip','_annotated.zip'));
-							$("a#downloadZIP").show().attr("href",URL.createObjectURL(blob)).attr("download",sessionName.replace('.zip','_annotated.zip'));
+					        //saveAs(blob, SessionsionName.replace('.zip','_annotated.zip'));
+							$("a#dwnZIPmanualsensor").attr("href",URL.createObjectURL(blob)).attr("download",sessionName.replace('.zip','_manualsensor.zip'));
+					    }, function (e) {
+					        showError(e);
+					    });
+                });
+                zip = new JSZip();
+                zip.loadAsync($file).then(function (zip) {
+                     zip.file("_annotations.json", jsonFileAnnotations);
+                     var newZip = zip.generateAsync({type:"blob"}).then(function callback(blob) {	
+					        //saveAs(blob, SessionsionName.replace('.zip','_annotated.zip'));
+							$("a#dwnZIPannotations").attr("href",URL.createObjectURL(blob)).attr("download",sessionName.replace('.zip','_annotated.zip'));
 					    }, function (e) {
 					        showError(e);
 					    });
                 });
 			}
 
-			$("a#downloadJSON").show().attr("href","data:text/json;charset=utf-8," + encodeURIComponent(jsonFile));
-			
-			$("#plotJSON").show();
+			$("a#dwnJSONmanualsensor").attr("href","data:text/json;charset=utf-8," + encodeURIComponent(jsonFileManualSensor));
+			$("a#dwnJSONAnnotations").attr("href","data:text/json;charset=utf-8," + encodeURIComponent(jsonFileAnnotations));
+			$("#inputGroupAnnotations, #inputGroupManualSensor").show();
 		}
-
-		$("#plotJSON").unbind().on('click', function (e) {
-		    e.preventDefault();
-		    addToAttrDict(JSON.stringify(jsonObj));
-		    treeAttributes.reload();
-		});
 
 		$("#plotJSON").unbind().on('click', function (e) {
 		    e.preventDefault();
@@ -649,16 +717,76 @@
 
 
 	});
-	// Export 
-	$("#attributesJSON").unbind().click(function () {
-		console.log("export JSON started");
-		if ($("input[name=annotationFPS]").val()){
-			annTf = 1/parseFloat($("input[name=annotationFPS]").val());
-		} else {
-			annTf = 0.5;
-		}
+
+
+	// Event handler - Load Annotation Panel 
+	$("#annotationFile").on("change", function (evt) {
+		var fileExtension = ['json'];
+        if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+            alert("Only formats are allowed : "+fileExtension.join(', '));
+        } else {
+        	var fileLength = $("#annotationFile")[0].files.length;
+			if(fileLength === 0){
+			    alert("Annotation file is empty!");
+			} else {
+				if (typeof chart != "undefined"){
+					$("#interval").val("");
+					$("#intervalList").find('option').remove();
+					f = $("#annotationFile").prop('files')[0];
+					var r = new FileReader();
+				    r.onload = function(e) { 
+						jObj = JSON.parse(e.target.result); 
+					    for (el in jObj){
+					  		jObj[el].class = 'rated';
+					  		jObj[el].axis = 'x';
+					  		if (jObj[el].hasOwnProperty('start') && jObj[el].hasOwnProperty('end')){
+					  			begin = jObj[el].start;
+					  			stop = jObj[el].end;
+					  			$("#intervalList").append("<option value='"+begin+", "+stop+"' data-section='intervals'>"+ moment.duration(parseFloat(begin), 'seconds').format("hh:mm:ss.SSS")+" to "+moment.duration(parseFloat(stop), 'seconds').format("hh:mm:ss.SSS")+"</option>");
+					  		}
+					  		keys = Object.keys(jObj[el]);
+					  		for (k in keys){ 
+					  			if (keys[k]!='axis' && keys[k]!='start' && keys[k]!='end' && keys[k]!='class'){
+					  				if ($("input[name=inputKeyList][value="+keys[k]+"]").length==0){
+										$("#keyValuePairList").append('<div class="keyValuePair"><label>'+keys[k]+'</label><input type="hidden" name="inputKeyList" value="'+keys[k]+'" /><input type="text" class="form-control input-sm smallInput" name="inputValueList" placeholder="Add value"/> <div class="deleteKeyValueLink small"><a href="#" class="deleteKeyValuePair">[X]</a></div></div> ');
+									}
+					  			}
+					  		}
+					  	}
+						intervalList.reload();
+						regions = jObj;
+						chart.regions(regions);	
+
+					  	$("a.deleteKeyValuePair").unbind().on('click', function (e) {
+						    e.preventDefault();
+						    if(confirm("Are you sure you want to delete this annotation pair?")){
+						    	$(this).parent('div').parent('div').hide().remove();
+						    	var property = $(this).parent('div').parent('div').children('input[name=inputKeyList]').val();
+						    	var jsObjRegions = [];
+								for(r in regions) {
+									var reg = {};
+									for (k in regions[r]){
+										if(k != property) {
+					                		reg[k] = regions[r][k];
+					        			}
+									}
+					        		jsObjRegions.push(reg);
+								}
+								regions = jsObjRegions;
+						    	chart.regions(regions);	
+						    }
+						});
+				    }
+				    r.readAsText(f);
+			    } else {
+			    	alert("Session is not loaded. Load a session first!");
+			    }
+
+			}
+        }
+
+
 	});
-	
 
 	// Sums the values of a dictionary
 	function sum( obj ) {
@@ -712,6 +840,18 @@
 		return result;
 	}
 
+
+	window.onbeforeunload = function (e) {
+  		var message = "Do you want to leave the page?",
+		e = e || window.event;
+	  // For IE and Firefox
+	  if (e) {
+	    e.returnValue = message;
+	  }
+
+	  // For Safari
+	  return message;
+	};
   </script>
   <script type="text/javascript" src="js/counter.js"></script>
 </html>
