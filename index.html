@@ -38,6 +38,7 @@
 		#attrTree {padding-right: 0;}
 		#plotsContainer {padding-left: 0;}
 		div.tree-multiselect > div.selections.no-border {max-height: 500px; overflow-y: scroll;}
+		#editInvervals div.tree-multiselect > div.selections.no-border, #keyValuePairList {max-height: 250px; overflow-y: scroll;}
 		#wrapper {padding: 0 40px 0 20px;}
 		div.section > div.section, div.tree-multiselect div.section > div.item {padding-left: 5px;}
 		.smallInput {/*width:18%;*/ width: 35%; float: left; margin-right:5px;}
@@ -51,8 +52,8 @@
 		div.deleteKeyValueLink { margin-top: 10px; float: right;}
 		#sessionFileList {margin-top:10px;}
 		#sessionFileList ul {margin-bottom:0px;}
-		#inputGroupAnnotations, #inputGroupManualSensor {clear:both; text-align: right; display: none;}
-		#inputGroupAnnotations label, #inputGroupManualSensor label {float:left; margin-right: 5px}
+		#inputGroupAnnotations {clear:both; text-align: right; display: none;}
+		#inputGroupAnnotations label {float:left; margin-right: 5px}
 	</style>
 </head>
 <body>
@@ -62,9 +63,9 @@
 		<div class="col-sm-8">
 	  		<h3>Visual Inspection tool <small>Multimodal data dasbhoard</small></h3>
 		</div>
-		<div class="col-sm-4" >
+		<div class="col-sm-4">
 			<br />
-			<p class="small" style="text-align: right;">Version 1.5 - Credits: <a href="http://www.dimstudio.org" target="_blank">Daniele Di Mitri</a> - Open Universiteit (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>)</p>
+			<p class="small" style="text-align: right;">Version 1.6 - Credits: <a href="http://www.dimstudio.org" target="_blank">Daniele Di Mitri</a> - Open Universiteit (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>)</p>
 		</div>
 	</div>
 	<div class="row">
@@ -99,8 +100,11 @@
 						  	<form>
 							  	<div class="row">
 								    <div class="col-sm-6" >
-								      <input type="file" id="annotationFile"  class="custom-file-input"> 
+								      <input type="file" id="annotationFile"  class="custom-file-input" style="float: left;"> 
 								    </div>
+								    <div class="col-sm-6" >
+								   		<input type="text" name="offset" id="offset" class="number smallInput form-control input-sm" style="float: right;" placeholder="Offset" />
+									</div>
 									
 								</div>
 							</form>
@@ -114,7 +118,7 @@
 					   	<div class="panel-heading panel-footer">
 						    <h3 class="panel-title ">Edit intervals <small>Resize plot legend, add interval.</small></h3>
 						</div> 	
-						<div class="panel-body">
+						<div class="panel-body" id="editInvervals">
 						   	<input type="text" readonly class="form-control input-sm zoomInput" id="interval" placeholder="Zoom into the plot legend">
 						    <button type="button" id="addinterval" class="btn btn-success btn-sm">Add</button>
 						    <button type="button" class="btn btn-danger btn-sm" id="delete-button">Delete</button>
@@ -129,41 +133,15 @@
 							</div>
 					    	<div class="panel-body">
 						    	<input type="text" class="form-control input-sm smallInput" id="inputKey" placeholder="Annotation label" required>
-						    	<input type="text" class="form-control input-sm smallInput" id="inputDefaultValue" placeholder="Defualt value" required>
-						    	<button type="button" id="addAnnotationKey" class="btn btn-success btn-sm">Add</button> 			
+						    	<button type="button" id="addAnnotationKey" class="btn btn-success btn-sm">Add</button> 
+						    	<button type="button" id="exportJSON" class="btn btn-primary btn-sm" style="float:right">Export</button>			
 						    	<form id="keyValuePairForm">
 					    			<div id="keyValuePairList"></div>
 					    		</form>
-					    		<div>
-						    		<div>
-						    			<label for="annotationFPS" style="float:left; margin-right: 10px">Fps</label>
-									    <div class="input-group" style="width:28%; float:left; margin-right:5px; margin-bottom: 5px;"><!--Counter-->
-									        <span class="input-group-btn">
-									              <button type="button" class="btn btn-default btn-number btn-sm" disabled="disabled" data-type="minus" data-field="annotationFPS">
-									                  <i class="fa fa-minus"></i>
-									              </button>
-									        </span>
-									          <input type="text" name="annotationFPS" class="form-control input-number input-sm" value="1" min="1" max="25">
-									       	<span class="input-group-btn">
-									              <button type="button" class="btn btn-default btn-number btn-sm" data-type="plus" data-field="annotationFPS">
-									                  <i class="fa fa-plus"></i>
-									              </button>
-									        </span>
-								    	</div>
-					    				<!--/counter-->
-				    					<button type="button" id="exportJSON" class="btn btn-primary btn-sm" style="float:right">Export</button>
-						       	    </div>
-						    		<div id="inputGroupManualSensor">
-						    			<label>Manual sensor</label>
-						    			<button type="button" id="plotJSON" class="btn btn-default btn-sm"><i class="fa fa-line-chart"></i> Plot</button>
-						    			<a class="btn btn-default btn-sm" href="" download="manual_sensor.json" id="dwnJSONmanualsensor"><i class="fa fa-file-code-o"></i> Json</a>
-						    			<a class="btn btn-default btn-sm" href="" download="example.zip" id="dwnZIPmanualsensor" ><i class="fa fa-file-archive-o"></i> Zip</a>
-						    		</div>
-						    		<div id="inputGroupAnnotations" >
-						    			<label>Annotations</label>
-						    			<a class="btn btn-default btn-sm" href="" download="_annotations.json" id="dwnJSONAnnotations"><i class="fa fa-file-code-o"></i> Json</a>
-						    			<a class="btn btn-default btn-sm" href="" download="example.zip" id="dwnZIPannotations"><i class="fa fa-file-archive-o"></i> Zip</a>
-						    		</div>
+					    		<div id="inputGroupAnnotations" >
+					    			<label>Annotations</label>
+					    			<a class="btn btn-default btn-sm" href="" download="_annotations.json" id="dwnJSONAnnotations"><i class="fa fa-file-code-o"></i> Json</a>
+					    			<a class="btn btn-default btn-sm" href="" download="example.zip" id="dwnZIPannotations"><i class="fa fa-file-archive-o"></i> Zip</a>
 					    		</div>
 					    	</div>
 					    </div>
@@ -217,7 +195,6 @@
 		$('#attrTreeSelect').find('option').remove();
 		treeAttributes.reload();
 		treeOnChange();
-		$("a#dwnJSONmanualsensor").attr("href","");
 		$("a#dwnJSONAnnotations").attr("href","");
 		$("#theVideo video").remove();
 		$("#theVideo").html("<video style='width:100%;' controls=''></video>");
@@ -343,8 +320,7 @@
 
 	}
 
-	// generatePlot (out of the AttributeList)
-
+	
 	function treeOnChange(allSelectedItems, addedItems, removedItems) {
 		var xs = {};
 		var columns = [];
@@ -390,12 +366,14 @@
 		if (keyMax > 0) {
 			q = keyMax / 20;
 			for (i = 0; i <= 20; i =i+1) {
-				xAxisTicks.push(q*(i+1));
+				xAxisTicks.push(toInteger(q*(i+1)));
 			}
 
 		}
 		generatePlot(xs,columns,xAxisTicks);
 	}
+
+	// generatePlot (out of the AttributeList)
 	function generatePlot(xs,columns,xAxisTicks) {
 		chart = c3.generate({
 			bindto: '#plotGraph',
@@ -548,13 +526,16 @@
 			        		if (!temp.hasOwnProperty(keys[j])) temp[keys[j]] = regions[k][keys[j]];		
 			        		if (regions[k][keys[j]] == temp[keys[j]]){
 			        			$("input[name=inputKeyList][value="+keys[j]+"]").next().val(temp[keys[j]]);
+			        			temp[keys[j]] = regions[k][keys[j]]; 
 			        		} else {
 			        			$("input[name=inputKeyList][value="+keys[j]+"]").next().val('').attr('placeholder','?');
+			        			temp[keys[j]] = ''; 
 			        		}
 			        	} else if (temp.hasOwnProperty(keys[j])){
 			        		$("input[name=inputKeyList][value="+keys[j]+"]").next().val('').attr('placeholder','?');
+			        		temp[keys[j]] = ''; 
 			        	} 
-			        	temp[keys[j]] = regions[k][keys[j]]; 
+			        	
 			        }
 			        
 			    }
@@ -573,7 +554,7 @@
 				alert('Key already exists in the annotation list.');
 			}
 			else {
-				$("#keyValuePairList").append('<div class="keyValuePair"><label>'+key+'</label><input type="hidden" name="inputKeyList" value="'+key+'" /><input type="text" class="form-control input-sm smallInput" name="inputValueList" placeholder="Add value"/> <input type="hidden" name="inputValueDefault" value="'+dValue+'" /><div class="deleteKeyValueLink small">'+dValue+' (default) <a href="#" class="deleteKeyValuePair">[X]</a></div></div>');
+				$("#keyValuePairList").append('<div class="keyValuePair"><label>'+key+'</label><input type="hidden" name="inputKeyList" value="'+key+'" /><input type="text" class="form-control input-sm smallInput" name="inputValueList" placeholder="Add value"/> <div class="deleteKeyValueLink small"><a href="#" class="deleteKeyValuePair">[X]</a></div></div>');
 				$("#inputKey").val('').removeAttr('value');
 				$("#inputDefaultValue").val('').removeAttr('value');
 			}
@@ -598,7 +579,7 @@
 
 		$("input[name='inputKeyList']").each(function() { inputKeys.push($(this).val()); });
 		$("input[name='inputValueList']").each(function() { inputValues.push($(this).val()); });
-		if (inputKeys!=[]&&inputValues!=[]){
+		if (inputKeys.length>0 && inputValues.length>0){
 			annotationList = toObject(inputKeys,inputValues);
 		}
 		var interv = $('select#intervalList').val();
@@ -615,60 +596,13 @@
 	});
 
 	$("#exportJSON").unbind().click(function () {
-		var intervals = $("#intervalList").val();
-		var keys = [];
-		var values = [];
-		var annotationList;
-		var temp = false; 
-		var inter;
+		var annotationList = [];
+		var jsObjRegions = [];
 		var jsonObj = {};
-		var annObj = [];	
-		var annTf;
-		//var attrkeys;
 
-		// Manual sensor -> manual_sensor.json
-		var attributes = $("#attrTreeSelect").val();
-		if ($("input[name=annotationFPS]").val()){
-			annTf = 1/parseFloat($("input[name=annotationFPS]").val());
-		} else {
-			annTf = 0.5;
-		}
-		$("input[name='inputKeyList']").each(function() { keys.push($(this).val()); });
-		$("input[name='inputValueDefault']").each(function() { values.push($(this).val());});
-		annotationList = toObject(keys,values);
-		if (!$.isEmptyObject(annotationList)){
-			for (var i = 0; i < annObjLen/annTf; i++) {
-				for (k in regions){
-					if(regions[k].class=='selected' && temp == false){
-						if (i*annTf>=parseFloat(regions[k].start) && i*annTf<=parseFloat(regions[k].end)){
-							for (j in keys){
-								if (regions[k].hasOwnProperty(keys[j])){
-									if (regions[k][keys[j]]!=""){
-										annotationList[keys[j]] = regions[k][keys[j]];
-									} else {
-										annotationList[keys[j]] = values[j];
-									}
-									temp = true;
-								}
-							}
-						}
-					}
-				}
-				annObj.push({
-					frameStamp: moment.utc(i*annTf*1000).format('HH:mm:ss.SSS'),
-					frameAttributes: annotationList
-				});
-				temp = false;
-				annotationList = toObject(keys,values);
-			}
-			jsonObj["recordingID"] = sessionName;
-			jsonObj["applicationName"] = "ManualSensor";
-			jsonObj["frames"] = annObj;
-			jsonFileManualSensor = JSON.stringify(jsonObj, 0, 4);
-
+		$("input[name='inputKeyList']").each(function() { annotationList.push($(this).val()); });
+		if (annotationList.length>0){
 			// Regions -> _annotations.json
-			//Discard the axis and class properties
-			var jsObjRegions = [];
 			for(r in regions) {
 				var reg = {};
 				for (k in regions[r]){
@@ -678,21 +612,14 @@
 				}
         		jsObjRegions.push(reg);
 			}
-			jsonFileAnnotations = JSON.stringify(jsObjRegions, 0, 4)
+			jsonObj.applicationName = "ManualAnnotations"
+			jsonObj.recordingID = sessionName.replace('.zip','');
+			jsonObj.intervals = jsObjRegions
+			jsonObj = JSON.stringify(jsonObj, 0, 4)
 
 			if ($("#sessionFile").length>0){
  				var $file = $("#sessionFile")[0].files[0];
                 var zip = new JSZip();
-                zip.loadAsync($file).then(function (zip) {
-                     zip.file("manual_sensor.json", jsonFileManualSensor);
-                     var newZip = zip.generateAsync({type:"blob"}).then(function callback(blob) {	
-					        //saveAs(blob, SessionsionName.replace('.zip','_annotated.zip'));
-							$("a#dwnZIPmanualsensor").attr("href",URL.createObjectURL(blob)).attr("download",sessionName.replace('.zip','_manualsensor.zip'));
-					    }, function (e) {
-					        showError(e);
-					    });
-                });
-                zip = new JSZip();
                 zip.loadAsync($file).then(function (zip) {
                      zip.file("_annotations.json", jsonFileAnnotations);
                      var newZip = zip.generateAsync({type:"blob"}).then(function callback(blob) {	
@@ -703,26 +630,21 @@
 					    });
                 });
 			}
-
-			$("a#dwnJSONmanualsensor").attr("href","data:text/json;charset=utf-8," + encodeURIComponent(jsonFileManualSensor));
-			$("a#dwnJSONAnnotations").attr("href","data:text/json;charset=utf-8," + encodeURIComponent(jsonFileAnnotations));
-			$("#inputGroupAnnotations, #inputGroupManualSensor").show();
+			$("a#dwnJSONAnnotations").attr("href","data:text/json;charset=utf-8," + encodeURIComponent(jsonObj));
+			$("#inputGroupAnnotations").show();
 		}
-
-		$("#plotJSON").unbind().on('click', function (e) {
-		    e.preventDefault();
-		    addToAttrDict(JSON.stringify(jsonObj));
-		    treeAttributes.reload();
-		});
-
 
 	});
 
 
 	// Event handler - Load Annotation Panel 
-	$("#annotationFile").on("change", function (evt) {
+	$("#annotationFile, #offset").on("change", function (evt) {
 		var fileExtension = ['json'];
-        if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+		var jsObjRegions = [];
+		var reg = {};
+		var inputKeys = [];
+		var offset = 0;
+        if ($.inArray($("#annotationFile").val().split('.').pop().toLowerCase(), fileExtension) == -1) {
             alert("Only formats are allowed : "+fileExtension.join(', '));
         } else {
         	var fileLength = $("#annotationFile")[0].files.length;
@@ -730,21 +652,34 @@
 			    alert("Annotation file is empty!");
 			} else {
 				if (typeof chart != "undefined"){
-					$("#interval").val("");
-					$("#intervalList").find('option').remove();
+					$("input[name=inputKeyList]").each(function() { inputKeys.push($(this).val()); });
+					if (regions.length>0 || inputKeys.length>0 ){
+						if(confirm("Changing these values will delete current annotations. Continue?")){
+					    	$("#keyValuePairList").empty();
+					    	$("#interval").val("");
+							$("#intervalList").find('option').remove();
+						}
+						
+					}
+					
 					f = $("#annotationFile").prop('files')[0];
 					var r = new FileReader();
 				    r.onload = function(e) { 
+
 						jObj = JSON.parse(e.target.result); 
-					    for (el in jObj){
-					  		jObj[el].class = 'rated';
-					  		jObj[el].axis = 'x';
-					  		if (jObj[el].hasOwnProperty('start') && jObj[el].hasOwnProperty('end')){
-					  			begin = jObj[el].start;
-					  			stop = jObj[el].end;
+						jObjInt = jObj.intervals;
+						if ($("#offset").val()!='') offset = parseFloat($("#offset").val());
+					    for (el in jObjInt){
+					  		jObjInt[el].class = 'rated';
+					  		jObjInt[el].axis = 'x';
+					  		if (jObjInt[el].hasOwnProperty('start') && jObjInt[el].hasOwnProperty('end')){
+					  			begin = (parseFloat(jObjInt[el].start) + offset).toString(); 
+					  			jObjInt[el].start = begin;
+					  			stop = (parseFloat(jObjInt[el].end) + offset).toString();
+					  			jObjInt[el].end = stop;
 					  			$("#intervalList").append("<option value='"+begin+", "+stop+"' data-section='intervals'>"+ moment.duration(parseFloat(begin), 'seconds').format("hh:mm:ss.SSS")+" to "+moment.duration(parseFloat(stop), 'seconds').format("hh:mm:ss.SSS")+"</option>");
 					  		}
-					  		keys = Object.keys(jObj[el]);
+					  		keys = Object.keys(jObjInt[el]);
 					  		for (k in keys){ 
 					  			if (keys[k]!='axis' && keys[k]!='start' && keys[k]!='end' && keys[k]!='class'){
 					  				if ($("input[name=inputKeyList][value="+keys[k]+"]").length==0){
@@ -754,7 +689,7 @@
 					  		}
 					  	}
 						intervalList.reload();
-						regions = jObj;
+						regions = jObjInt;
 						chart.regions(regions);	
 
 					  	$("a.deleteKeyValuePair").unbind().on('click', function (e) {
@@ -762,9 +697,9 @@
 						    if(confirm("Are you sure you want to delete this annotation pair?")){
 						    	$(this).parent('div').parent('div').hide().remove();
 						    	var property = $(this).parent('div').parent('div').children('input[name=inputKeyList]').val();
-						    	var jsObjRegions = [];
+						    	jsObjRegions = [];
 								for(r in regions) {
-									var reg = {};
+									reg = {};
 									for (k in regions[r]){
 										if(k != property) {
 					                		reg[k] = regions[r][k];
@@ -786,6 +721,12 @@
         }
 
 
+	});
+	// Test if the field (offset) is a float
+	$('.number').keypress(function(event) {
+	  if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+	    event.preventDefault();
+	  }
 	});
 
 	// Sums the values of a dictionary
@@ -840,6 +781,11 @@
 		return result;
 	}
 
+	function toInteger(number){ 
+	  return Math.round(  // round to nearest integer
+	    Number(number)    // type cast your input
+	  ); 
+	}
 
 	window.onbeforeunload = function (e) {
   		var message = "Do you want to leave the page?",
@@ -852,6 +798,8 @@
 	  // For Safari
 	  return message;
 	};
+
+
   </script>
   <script type="text/javascript" src="js/counter.js"></script>
 </html>
