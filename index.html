@@ -140,6 +140,7 @@
 					    		</form>
 					    		<div id="inputGroupAnnotations" >
 					    			<label>Annotations</label>
+					    			<button type="button" id="plotJSON" class="btn btn-default btn-sm"><i class="fa fa-line-chart"></i></button>
 					    			<a class="btn btn-default btn-sm" href="" download="_annotations.json" id="dwnJSONAnnotations"><i class="fa fa-file-code-o"></i> Json</a>
 					    			<a class="btn btn-default btn-sm" href="" download="example.zip" id="dwnZIPannotations"><i class="fa fa-file-archive-o"></i> Zip</a>
 					    		</div>
@@ -621,8 +622,8 @@
  				var $file = $("#sessionFile")[0].files[0];
                 var zip = new JSZip();
                 zip.loadAsync($file).then(function (zip) {
-                     zip.file("_annotations.json", jsonFileAnnotations);
-                     var newZip = zip.generateAsync({type:"blob"}).then(function callback(blob) {	
+                     zip.file("_annotations.json", jsonObj);
+                     var newZip = zip.generateAsync({type:"blob",compression: "DEFLATE"}).then(function callback(blob) {	
 					        //saveAs(blob, SessionsionName.replace('.zip','_annotated.zip'));
 							$("a#dwnZIPannotations").attr("href",URL.createObjectURL(blob)).attr("download",sessionName.replace('.zip','_annotated.zip'));
 					    }, function (e) {
@@ -673,9 +674,9 @@
 					  		jObjInt[el].class = 'rated';
 					  		jObjInt[el].axis = 'x';
 					  		if (jObjInt[el].hasOwnProperty('start') && jObjInt[el].hasOwnProperty('end')){
-					  			begin = (parseFloat(jObjInt[el].start) + offset).toString(); 
+					  			begin = (parseFloat(jObjInt[el].start) + offset).toFixed(2).toString(); 
 					  			jObjInt[el].start = begin;
-					  			stop = (parseFloat(jObjInt[el].end) + offset).toString();
+					  			stop = (parseFloat(jObjInt[el].end) + offset).toFixed(2).toString();
 					  			jObjInt[el].end = stop;
 					  			$("#intervalList").append("<option value='"+begin+", "+stop+"' data-section='intervals'>"+ moment.duration(parseFloat(begin), 'seconds').format("hh:mm:ss.SSS")+" to "+moment.duration(parseFloat(stop), 'seconds').format("hh:mm:ss.SSS")+"</option>");
 					  		}
