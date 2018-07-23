@@ -140,7 +140,7 @@
 					    		</form>
 					    		<div id="inputGroupAnnotations" >
 					    			<label>Annotations</label>
-					    			<button type="button" id="plotJSON" class="btn btn-default btn-sm"><i class="fa fa-line-chart"></i></button>
+					    			<button type="button" id="plotJSON" class="btn btn-default btn-sm"><i class="fa fa-line-chart"></i> Plot</button>
 					    			<a class="btn btn-default btn-sm" href="" download="_annotations.json" id="dwnJSONAnnotations"><i class="fa fa-file-code-o"></i> Json</a>
 					    			<a class="btn btn-default btn-sm" href="" download="example.zip" id="dwnZIPannotations"><i class="fa fa-file-archive-o"></i> Zip</a>
 					    		</div>
@@ -274,13 +274,25 @@
 		var applicationName = json_object.applicationName;
 		var attr;
 		tempAttrDict = {}
-		for (i in json_object.frames) {
-			for (j in json_object.frames[i].frameAttributes) {
-				if (!(j in tempAttrDict)) {
-					tempAttrDict[j] = {};
-				}
-				tempAttrDict[j][json_object.frames[i].frameStamp.substring(0,12)] = json_object.frames[i].frameAttributes[j];
-			}	
+		if (json_object.hasOwnProperty("frames")) {
+			for (i in json_object.frames) {
+				for (j in json_object.frames[i].frameAttributes) {
+					if (!(j in tempAttrDict)) {
+						tempAttrDict[j] = {};
+					}
+					tempAttrDict[j][json_object.frames[i].frameStamp.substring(0,12)] = json_object.frames[i].frameAttributes[j];
+				}	
+			}
+		} else if (json_object.hasOwnProperty("intervals")) {
+			for (i in json_object.intervals) {
+				for (j in json_object.intervals[i].annotations) { // Add attributes
+					if (!(j in tempAttrDict)) {
+						tempAttrDict[j] = {};
+					}
+					tempAttrDict[j][json_object.intervals[i].start.substring(0,12)] = json_object.intervals[i].annotations[j];
+					tempAttrDict[j][json_object.intervals[i].end.substring(0,12)] = json_object.intervals[i].annotations[j];
+				}	
+			}
 		}
 		for (i in Object.keys(tempAttrDict)){
 			//console.log(Object.keys(tempAttrDict)[i]+" "+sum(tempAttrDict[Object.keys(tempAttrDict)[i]]));
@@ -343,8 +355,9 @@
 					cols = $.map(attrDict[attr], function (value, key) { return value });
 				}
 				cols.unshift(attr);
-				rows = $.map(attrDict[attr], function (value, key) { return toDurationS(key)});
-				max = rows[rows.length - 1];
+				attrDict[attr]
+				rows = $.map(attrDict[attr], function (value, key) { return moment.duration(key).asSeconds()});
+				max = moment.duration(Object.keys(attrDict[attr])[Object.keys(attrDict[attr]).length - 1]).asSeconds()
 				if (max > keyMax) {
 					keyMax = max;
 				}
@@ -354,7 +367,7 @@
 				xs[attr] = attr + '_x';
 			} else if (stringObj(attrDict[attr])) {
 				// String time series (e.g. feedback)
-				rows = $.map(attrDict[attr], function (value, key) { return toDurationS(key)});
+				rows = $.map(attrDict[attr], function (value, key) { return tmoment.duration(key).asSeconds()});
 				rows.unshift(attr + '_x');
 				values = $.map(attrDict[attr], function (value, key) { return "0" });
 				values.unshift(attr);
@@ -607,8 +620,11 @@
 			for(r in regions) {
 				var reg = {};
 				for (k in regions[r]){
-					if(k != 'axis' && k != 'class') {
-                		reg[k] = regions[r][k];
+					if (k=='start' || k=='end'){
+						reg[k]= moment(moment.duration(parseFloat(regions[r][k]), 'seconds')._data).format('HH:mm:ss.SSS');
+					} else if(k != 'axis' && k != 'class') {
+						if (!reg.hasOwnProperty('annotations')) reg.annotations = {};
+                		reg.annotations[k] = regions[r][k];
         			}
 				}
         		jsObjRegions.push(reg);
@@ -633,6 +649,11 @@
 			}
 			$("a#dwnJSONAnnotations").attr("href","data:text/json;charset=utf-8," + encodeURIComponent(jsonObj));
 			$("#inputGroupAnnotations").show();
+
+			$("#plotJSON").unbind().click(function () {
+				addToAttrDict(jsonObj);
+				treeAttributes.reload();
+			});
 		}
 
 	});
@@ -674,20 +695,25 @@
 					  		jObjInt[el].class = 'rated';
 					  		jObjInt[el].axis = 'x';
 					  		if (jObjInt[el].hasOwnProperty('start') && jObjInt[el].hasOwnProperty('end')){
-					  			begin = (parseFloat(jObjInt[el].start) + offset).toFixed(2).toString(); 
+					  			begin = (parseFloat(moment.duration(jObjInt[el].start.substring(0,12)).asSeconds())+ offset).toFixed(2).toString();
 					  			jObjInt[el].start = begin;
-					  			stop = (parseFloat(jObjInt[el].end) + offset).toFixed(2).toString();
+					  			stop = (parseFloat(moment.duration(jObjInt[el].end.substring(0,12)).asSeconds())+ offset).toFixed(2).toString();
 					  			jObjInt[el].end = stop;
 					  			$("#intervalList").append("<option value='"+begin+", "+stop+"' data-section='intervals'>"+ moment.duration(parseFloat(begin), 'seconds').format("hh:mm:ss.SSS")+" to "+moment.duration(parseFloat(stop), 'seconds').format("hh:mm:ss.SSS")+"</option>");
 					  		}
-					  		keys = Object.keys(jObjInt[el]);
-					  		for (k in keys){ 
-					  			if (keys[k]!='axis' && keys[k]!='start' && keys[k]!='end' && keys[k]!='class'){
-					  				if ($("input[name=inputKeyList][value="+keys[k]+"]").length==0){
-										$("#keyValuePairList").append('<div class="keyValuePair"><label>'+keys[k]+'</label><input type="hidden" name="inputKeyList" value="'+keys[k]+'" /><input type="text" class="form-control input-sm smallInput" name="inputValueList" placeholder="Add value"/> <div class="deleteKeyValueLink small"><a href="#" class="deleteKeyValuePair">[X]</a></div></div> ');
-									}
-					  			}
+					  		if (jObjInt[el].hasOwnProperty('annotations')){
+					  			keys = Object.keys(jObjInt[el].annotations);
+						  		for (k in keys){ 
+						  			if (keys[k]!='axis' && keys[k]!='start' && keys[k]!='end' && keys[k]!='class'){
+						  				if ($("input[name=inputKeyList][value="+keys[k]+"]").length==0){
+											$("#keyValuePairList").append('<div class="keyValuePair"><label>'+keys[k]+'</label><input type="hidden" name="inputKeyList" value="'+keys[k]+'" /><input type="text" class="form-control input-sm smallInput" name="inputValueList" placeholder="Add value"/> <div class="deleteKeyValueLink small"><a href="#" class="deleteKeyValuePair">[X]</a></div></div> ');
+										}
+										jObjInt[el][keys[k]] = jObjInt[el].annotations[keys[k]];
+						  			}
+						  		}
+						  		delete jObjInt[el].annotations;
 					  		}
+
 					  	}
 						intervalList.reload();
 						regions = jObjInt;
