@@ -94,7 +94,7 @@
 				<div class="col-sm-6" style="padding-right:0;">
 				  	<div class="panel panel-default">
 				  		<div class="panel-heading panel-footer">
-						    <h3 class="panel-title ">Load annotations <small>_annotations.json</small></h3>
+						    <h3 class="panel-title ">Load annotations <small>annotations.json</small></h3>
 						</div>
 					  	<div class="panel-body">	
 						  	<form>
@@ -141,7 +141,7 @@
 					    		<div id="inputGroupAnnotations" >
 					    			<label>Annotations</label>
 					    			<button type="button" id="plotJSON" class="btn btn-default btn-sm"><i class="fa fa-line-chart"></i> Plot</button>
-					    			<a class="btn btn-default btn-sm" href="" download="_annotations.json" id="dwnJSONAnnotations"><i class="fa fa-file-code-o"></i> Json</a>
+					    			<a class="btn btn-default btn-sm" href="" download="annotations.json" id="dwnJSONAnnotations"><i class="fa fa-file-code-o"></i> Json</a>
 					    			<a class="btn btn-default btn-sm" href="" download="example.zip" id="dwnZIPannotations"><i class="fa fa-file-archive-o"></i> Zip</a>
 					    		</div>
 					    	</div>
@@ -273,6 +273,8 @@
 		json_object = JSON.parse(json_flat);		
 		var applicationName = json_object.applicationName;
 		var attr;
+		var parts;
+		var data_section = "";
 		tempAttrDict = {}
 		if (json_object.hasOwnProperty("frames")) {
 			for (i in json_object.frames) {
@@ -296,9 +298,19 @@
 		}
 		for (i in Object.keys(tempAttrDict)){
 			//console.log(Object.keys(tempAttrDict)[i]+" "+sum(tempAttrDict[Object.keys(tempAttrDict)[i]]));
+			data_section = applicationName;
 			attr = Object.keys(tempAttrDict)[i];
 			if ($("#attrTreeSelect option[value='"+attr+"']").length <= 0){ // check if it first exists
-				first = attr.substring(0,1);
+				if ((sum(tempAttrDict[attr])!=0 && !isNaN(sum(tempAttrDict[attr]))) || stringObj(tempAttrDict[attr])){
+					parts = attr.split("_");
+					if (parts.length>1) {
+						for (p=0; p<parts.length-1; p++) data_section += "/"+ parts[p];
+					}
+					html = "<option value='"+attr+"' data-section='"+data_section+"'>"+parts[parts.length-1]+"</option>";
+					$("#attrTreeSelect").append(html);
+				}
+
+				/*first = attr.substring(0,1);
 				last = attr.substring(attr.length-1);
 				if (sum(tempAttrDict[attr])!=0 && !isNaN(sum(tempAttrDict[attr]))){
 					if (applicationName=='Kinect' && parseFloat(first)>=0){
@@ -318,7 +330,7 @@
 					} else {
 						$("#attrTreeSelect").append("<option value='"+attr+"' data-section='"+applicationName+"'>"+attr+"</option>");
 					}
-				}
+				}*/
 			}
 		}
 		attrDict = Object.assign(attrDict, tempAttrDict);
@@ -367,7 +379,7 @@
 				xs[attr] = attr + '_x';
 			} else if (stringObj(attrDict[attr])) {
 				// String time series (e.g. feedback)
-				rows = $.map(attrDict[attr], function (value, key) { return tmoment.duration(key).asSeconds()});
+				rows = $.map(attrDict[attr], function (value, key) { return moment.duration(key).asSeconds()});
 				rows.unshift(attr + '_x');
 				values = $.map(attrDict[attr], function (value, key) { return "0" });
 				values.unshift(attr);
@@ -616,7 +628,7 @@
 
 		$("input[name='inputKeyList']").each(function() { annotationList.push($(this).val()); });
 		if (annotationList.length>0){
-			// Regions -> _annotations.json
+			// Regions -> annotations.json
 			for(r in regions) {
 				var reg = {};
 				for (k in regions[r]){
@@ -638,7 +650,7 @@
  				var $file = $("#sessionFile")[0].files[0];
                 var zip = new JSZip();
                 zip.loadAsync($file).then(function (zip) {
-                     zip.file("_annotations.json", jsonObj);
+                     zip.file(sessionName.replace('.zip','')+"annotations.json", jsonObj);
                      var newZip = zip.generateAsync({type:"blob",compression: "DEFLATE"}).then(function callback(blob) {	
 					        //saveAs(blob, SessionsionName.replace('.zip','_annotated.zip'));
 							$("a#dwnZIPannotations").attr("href",URL.createObjectURL(blob)).attr("download",sessionName.replace('.zip','_annotated.zip'));
@@ -647,7 +659,7 @@
 					    });
                 });
 			}
-			$("a#dwnJSONAnnotations").attr("href","data:text/json;charset=utf-8," + encodeURIComponent(jsonObj));
+			$("a#dwnJSONAnnotations").attr("href","data:text/json;charset=utf-8," + encodeURIComponent(jsonObj)).attr("download",sessionName.replace('.zip','annotations.jsonObj'));
 			$("#inputGroupAnnotations").show();
 
 			$("#plotJSON").unbind().click(function () {
@@ -750,9 +762,10 @@
 
 	});
 	// Test if the field (offset) is a float
-	$('.number').keypress(function(event) {
-	  if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
-	    event.preventDefault();
+	$(".number").keypress(function(e){
+	  if (e.which != 46 && e.which != 45 && e.which != 46 &&
+	      !(e.which >= 48 && e.which <= 57)) {
+	    return false;
 	  }
 	});
 
