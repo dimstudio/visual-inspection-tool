@@ -310,27 +310,6 @@
 					$("#attrTreeSelect").append(html);
 				}
 
-				/*first = attr.substring(0,1);
-				last = attr.substring(attr.length-1);
-				if (sum(tempAttrDict[attr])!=0 && !isNaN(sum(tempAttrDict[attr]))){
-					if (applicationName=='Kinect' && parseFloat(first)>=0){
-						if (last=="X" || last=="Y" || last=="Z") { 
-							html = "<option value='"+attr+"' data-section='"+applicationName+"/"+first+"/"+attr.substring(1,attr.length-1)+"'>"+last+	"</option>";
-						} else {
-							html = "<option value='"+attr+"' data-section='"+applicationName+"/"+first+"'>"+attr.substring(1)+"</option>";
-						}
-						$("#attrTreeSelect").append(html);
-					} else {
-						$("#attrTreeSelect").append("<option value='"+attr+"' data-section='"+applicationName+"'>"+attr+"</option>");
-					}
-				} else if (stringObj(tempAttrDict[attr])) {
-					// Categoric e.g. feedback
-					if (applicationName=='Kinect' && parseFloat(first)>=0){
-						$("#attrTreeSelect").append("<option value='"+attr+"' data-section='"+applicationName+"/"+first+"'>"+attr.substring(1)+"</option>");
-					} else {
-						$("#attrTreeSelect").append("<option value='"+attr+"' data-section='"+applicationName+"'>"+attr+"</option>");
-					}
-				}*/
 			}
 		}
 		attrDict = Object.assign(attrDict, tempAttrDict);
@@ -567,14 +546,12 @@
 			    }
 			}
 		}
-		// TODO if 
 		chart.regions(regions);	
 	}
 
 
 	$("#addAnnotationKey").unbind().click(function () {
 		var key = $("#inputKey").val();
-		var dValue = $("#inputDefaultValue").val(); // TODO there will be no DValue
 		if (key && key!='axis' && key!='start' && key!='end' && key!='class') {
 			if ($("input[name=inputKeyList][value="+key+"]").length>0){
 				alert('Key already exists in the annotation list.');
@@ -604,7 +581,14 @@
 		var inter;
 
 		$("input[name='inputKeyList']").each(function() { inputKeys.push($(this).val()); });
-		$("input[name='inputValueList']").each(function() { inputValues.push($(this).val()); });
+		$("input[name='inputValueList']").each(function() { 
+			if ($(this).val()=="" && $(this).attr("placeholder")=="?") { 
+			//@TODO seems to work
+				inputValues.push(null); 
+			} else {
+				inputValues.push($(this).val()); 
+			}
+		});
 		if (inputKeys.length>0 && inputValues.length>0){
 			annotationList = toObject(inputKeys,inputValues);
 		}
@@ -614,7 +598,7 @@
 			for (k in regions){
 				if (regions[k].start == inter.split(', ')[0] && regions[k].end == inter.split(', ')[1]){
 					for (j in annotationList){
-			        	regions[k][j] = annotationList[j]; //set
+						if (annotationList[j]!=null) regions[k][j] = annotationList[j]; 
 			        }
 				}
 			}
