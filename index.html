@@ -278,12 +278,14 @@
 		tempAttrDict = {}
 		if (json_object.hasOwnProperty("frames")) {
 			for (i in json_object.frames) {
-				for (j in json_object.frames[i].frameAttributes) {
-					if (!(j in tempAttrDict)) {
-						tempAttrDict[j] = {};
-					}
-					tempAttrDict[j][json_object.frames[i].frameStamp.substring(0,12)] = json_object.frames[i].frameAttributes[j];
-				}	
+				if (json_object.frames[i]){
+					for (j in json_object.frames[i].frameAttributes) {
+						if (!(j in tempAttrDict)) {
+							tempAttrDict[j] = {};
+						}
+						tempAttrDict[j][json_object.frames[i].frameStamp.substring(0,12)] = json_object.frames[i].frameAttributes[j];
+					}	
+			}
 			}
 		} else if (json_object.hasOwnProperty("intervals")) {
 			for (i in json_object.intervals) {
