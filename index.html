@@ -65,7 +65,7 @@
 		</div>
 		<div class="col-sm-4">
 			<br />
-			<p class="small" style="text-align: right;">Version 1.6 - Credits: <a href="http://www.dimstudio.org" target="_blank">Daniele Di Mitri</a> - Open Universiteit (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>)</p>
+			<p class="small" style="text-align: right;">Version 1.7 - Credits: <a href="http://www.dimstudio.org" target="_blank">Daniele Di Mitri</a> - Open Universiteit (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>)</p>
 		</div>
 	</div>
 	<div class="row">
@@ -271,30 +271,30 @@
 
 	function addToAttrDict (json_flat) {
 		json_object = JSON.parse(json_flat);		
-		var applicationName = json_object.applicationName;
+		var applicationName = json_object.getProp("applicationName");
 		var attr;
 		var parts;
 		var data_section = "";
 		tempAttrDict = {}
-		if (json_object.hasOwnProperty("frames")) {
-			for (i in json_object.frames) {
-				if (json_object.frames[i]){
-					for (j in json_object.frames[i].frameAttributes) {
+		if (json_object.getProp("frames")) {
+			for (i in json_object.getProp("frames")) {
+				if (json_object.getProp("frames")[i]){
+					for (j in json_object.getProp("frames")[i].getProp("frameAttributes")) {
 						if (!(j in tempAttrDict)) {
 							tempAttrDict[j] = {};
 						}
-						tempAttrDict[j][json_object.frames[i].frameStamp.substring(0,12)] = json_object.frames[i].frameAttributes[j];
+						tempAttrDict[j][json_object.getProp("frames")[i].getProp("frameStamp").substring(0,12)] = json_object.getProp("frames")[i].getProp("frameAttributes")[j];
 					}	
 			}
 			}
-		} else if (json_object.hasOwnProperty("intervals")) {
-			for (i in json_object.intervals) {
-				for (j in json_object.intervals[i].annotations) { // Add attributes
+		} else if (json_object.getProp("intervals")) {
+			for (i in json_object.getProp("intervals")) {
+				for (j in json_object.getProp("intervals")[i].getProp("annotations")) { // Add attributes
 					if (!(j in tempAttrDict)) {
 						tempAttrDict[j] = {};
 					}
-					tempAttrDict[j][json_object.intervals[i].start.substring(0,12)] = json_object.intervals[i].annotations[j];
-					tempAttrDict[j][json_object.intervals[i].end.substring(0,12)] = json_object.intervals[i].annotations[j];
+					tempAttrDict[j][json_object.getProp("intervals")[i].getProp("start").substring(0,12)] = json_object.getProp("intervals")[i].getProp("annotations")[j];
+					tempAttrDict[j][json_object.getProp("intervals")[i].getProp("end").substring(0,12)] = json_object.getProp("intervals")[i].getProp("annotations")[j];
 				}	
 			}
 		}
@@ -627,10 +627,10 @@
 				}
         		jsObjRegions.push(reg);
 			}
-			jsonObj.applicationName = "ManualAnnotations"
-			jsonObj.recordingID = sessionName.replace('.zip','');
-			jsonObj.intervals = jsObjRegions
-			jsonObj = JSON.stringify(jsonObj, 0, 4)
+			jsonObj.setProp("applicationName", "ManualAnnotations");
+			jsonObj.setProp("recordingID", sessionName.replace('.zip',''));
+			jsonObj.setProp("intervals",  jsObjRegions);
+			jsonObj = JSON.stringify(jsonObj, 0, 4);
 
 			if ($("#sessionFile").length>0){
  				var $file = $("#sessionFile")[0].files[0];
@@ -825,6 +825,48 @@
 	  return message;
 	};
 
+
+	// Case unsensentive setters and getters
+	//https://stackoverflow.com/questions/12484386/access-javascript-property-case-insensitively
+	Object.defineProperty(Object.prototype, "getProp", {
+	    value: function (prop) {
+	        var key,self = this;
+	        for (key in self) {
+	            if (key.toLowerCase() == prop.toLowerCase()) {
+	                return self[key];
+	            }
+	        }
+	    },
+	    //this keeps jquery happy
+	    enumerable: false
+	});
+
+
+	Object.defineProperty(Object.prototype, "setProp", {
+	    value: function (prop, val) {
+	        var key,self = this;
+	        var found = false;
+	        if (Object.keys(self).length > 0) {
+	            for (key in self) {
+	                if (key.toLowerCase() == prop.toLowerCase()) {
+	                    //set existing property
+	                    found = true;                        
+	                    self[key] = val;
+	                    break;
+	                }
+	            }
+	        }
+
+	        if (!found) {
+	            //if the property was not found, create it
+	            self[prop] = val;
+	        }  
+
+	        return val;
+	    },
+	    //this keeps jquery happy
+	    enumerable: false
+	});
 
   </script>
   <script type="text/javascript" src="js/counter.js"></script>
