@@ -288,16 +288,39 @@
 			}
 			}
 		} else if (json_object.getProp("intervals")) {
-			for (i in json_object.getProp("intervals")) {
-				for (j in json_object.getProp("intervals")[i].getProp("annotations")) { // Add attributes
-					if (!(j in tempAttrDict)) {
-						tempAttrDict[j] = {};
-					}
-					tempAttrDict[j][json_object.getProp("intervals")[i].getProp("start").substring(0,12)] = json_object.getProp("intervals")[i].getProp("annotations")[j];
-					tempAttrDict[j][json_object.getProp("intervals")[i].getProp("end").substring(0,12)] = json_object.getProp("intervals")[i].getProp("annotations")[j];
-				}	
-			}
+			
+			jObjInt = json_object.getProp("intervals");
+		    for (el in jObjInt){
+
+		  		jObjInt[el].class = 'rated';
+		  		jObjInt[el].axis = 'x';
+		  		if (jObjInt[el].hasOwnProperty('start') && jObjInt[el].hasOwnProperty('end')){
+
+		  			begin = (parseFloat(moment.duration(jObjInt[el].start.substring(0,12)).asSeconds())).toFixed(2).toString();
+		  			jObjInt[el].start = begin;
+		  			stop = (parseFloat(moment.duration(jObjInt[el].end.substring(0,12)).asSeconds())).toFixed(2).toString();
+		  			jObjInt[el].end = stop;
+		  			$("#intervalList").append("<option value='"+begin+", "+stop+"' data-section='intervals'>"+ moment.duration(parseFloat(begin), 'seconds').format("hh:mm:ss.SSS")+" to "+moment.duration(parseFloat(stop), 'seconds').format("hh:mm:ss.SSS")+"</option>");
+		  		}
+		  		if (jObjInt[el].hasOwnProperty('annotations')){
+		  			keys = Object.keys(jObjInt[el].annotations);
+			  		for (k in keys){ 
+			  			if (keys[k]!='axis' && keys[k]!='start' && keys[k]!='end' && keys[k]!='class'){
+			  				if ($("input[name=inputKeyList][value="+keys[k]+"]").length==0){
+								$("#keyValuePairList").append('<div class="keyValuePair"><label>'+keys[k]+'</label><input type="hidden" name="inputKeyList" value="'+keys[k]+'" /><input type="text" class="form-control input-sm smallInput" name="inputValueList" placeholder="Add value"/> <div class="deleteKeyValueLink small"><a href="#" class="deleteKeyValuePair">[X]</a></div></div> ');
+							}
+							jObjInt[el][keys[k]] = jObjInt[el].annotations[keys[k]];
+			  			}
+			  		}
+			  		delete jObjInt[el].annotations;
+		  		}
+		  	}
+		  	intervalList.reload();
+		  	regions = jObjInt;
+			chart.regions(regions);	
+			
 		}
+
 		for (i in Object.keys(tempAttrDict)){
 			//console.log(Object.keys(tempAttrDict)[i]+" "+sum(tempAttrDict[Object.keys(tempAttrDict)[i]]));
 			data_section = applicationName;
