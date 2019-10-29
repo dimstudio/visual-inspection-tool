@@ -29,3 +29,11 @@ In case of questions you can email daniele@dismtudio.org
 
 ## 5. Screenshot
 ![alt text](https://i.imgur.com/btNVACK.png "Screenshot")
+
+## 6. Cite this 
+Di Mitri D., Schneider J., Specht M., Drachsler H. (2019) Read Between the Lines: An Annotation Tool for Multimodal Data for Learning. In Proceedings of the 9th International Conference on Learning Analytics & Knowledge  - LAK19 (pp. 51–60). New York, NY, USA: ACM. DOI: 10.1145/3303772.3303776
+
+http://doi.org/10.1145/3303772.3303776
+
+
+
