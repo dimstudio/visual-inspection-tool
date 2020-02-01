@@ -120,6 +120,7 @@
 						</div> 	
 						<div class="panel-body" id="editInvervals">
 						   	<input type="text" readonly class="form-control input-sm zoomInput" id="interval" placeholder="Zoom into the plot legend">
+						   	<span id="intervalCount"></span>
 						    <button type="button" id="addinterval" class="btn btn-success btn-sm">Add</button>
 						    <button type="button" class="btn btn-danger btn-sm" id="delete-button">Delete</button>
 						    <select id="intervalList"></select>
@@ -193,6 +194,7 @@
 		$("#interval").val("");
 		$("#intervalList").find('option').remove();
 		intervalList.reload();
+		$("#intervalCount").text($('#intervalList option').length);
 		$('#attrTreeSelect').find('option').remove();
 		treeAttributes.reload();
 		treeOnChange();
@@ -300,7 +302,7 @@
 		  			jObjInt[el].start = begin;
 		  			stop = (parseFloat(moment.duration(jObjInt[el].end.substring(0,12)).asSeconds())).toFixed(2).toString();
 		  			jObjInt[el].end = stop;
-		  			$("#intervalList").append("<option value='"+begin+", "+stop+"' data-section='intervals'>"+ moment.duration(parseFloat(begin), 'seconds').format("hh:mm:ss.SSS")+" to "+moment.duration(parseFloat(stop), 'seconds').format("hh:mm:ss.SSS")+"</option>");
+		  			$("#intervalList").append("<option value='"+begin+", "+stop+"' data-section='saved internally'>"+ moment.duration(parseFloat(begin), 'seconds').format("hh:mm:ss.SSS")+" to "+moment.duration(parseFloat(stop), 'seconds').format("hh:mm:ss.SSS")+"</option>");
 		  		}
 		  		if (jObjInt[el].hasOwnProperty('annotations')){
 		  			keys = Object.keys(jObjInt[el].annotations);
@@ -316,6 +318,7 @@
 		  		}
 		  	}
 		  	intervalList.reload();
+		  	$("#intervalCount").text($('#intervalList option').length);
 		  	regions = jObjInt;
 			chart.regions(regions);	
 			
@@ -510,8 +513,9 @@
 			var arr = $("#interval").val().split(", "),
 				begin = arr[0], stop = arr[1];
 			regions.push({ axis: 'x', start: begin, end: stop, class: 'rated' });
-			$("#intervalList").append("<option value='"+begin+", "+stop+"' data-section='intervals'>"+ moment.duration(parseFloat(begin), 'seconds').format("hh:mm:ss.SSS")+" to "+moment.duration(parseFloat(stop), 'seconds').format("hh:mm:ss.SSS")+"</option>");
+			$("#intervalList").append("<option value='"+begin+", "+stop+"' data-section='added manually'>"+ moment.duration(parseFloat(begin), 'seconds').format("hh:mm:ss.SSS")+" to "+moment.duration(parseFloat(stop), 'seconds').format("hh:mm:ss.SSS")+"</option>");
 			intervalList.reload();
+			$("#intervalCount").text($('#intervalList option').length);
 			chart.regions(regions);	
 		}
 	});
@@ -531,6 +535,7 @@
 	        chart.regions(regions);
 			$("#intervalList option:selected").remove();
 			intervalList.reload();
+			$("#intervalCount").text($('#intervalList option').length);
 	    }
 	    else{
 	        return false;
@@ -668,7 +673,7 @@
 					    });
                 });
 			}
-			$("a#dwnJSONAnnotations").attr("href","data:text/json;charset=utf-8," + encodeURIComponent(jsonObj)).attr("download",sessionName.replace('.zip','annotations.jsonObj'));
+			$("a#dwnJSONAnnotations").attr("href","data:text/json;charset=utf-8," + encodeURIComponent(jsonObj)).attr("download",sessionName.replace('.zip','annotations.json'));
 			$("#inputGroupAnnotations").show();
 
 			$("#plotJSON").unbind().click(function () {
@@ -700,6 +705,7 @@
 						if(confirm("Changing these values will delete current annotations. Continue?")){
 					    	$("#keyValuePairList").empty();
 					    	$("#interval").val("");
+					    	$("#intervalCount").text($('#intervalList option').length);
 							$("#intervalList").find('option').remove();
 						}
 						
@@ -720,7 +726,8 @@
 					  			jObjInt[el].start = begin;
 					  			stop = (parseFloat(moment.duration(jObjInt[el].end.substring(0,12)).asSeconds())+ offset).toFixed(2).toString();
 					  			jObjInt[el].end = stop;
-					  			$("#intervalList").append("<option value='"+begin+", "+stop+"' data-section='intervals'>"+ moment.duration(parseFloat(begin), 'seconds').format("hh:mm:ss.SSS")+" to "+moment.duration(parseFloat(stop), 'seconds').format("hh:mm:ss.SSS")+"</option>");
+					  			$("#intervalList").append("<option value='"+begin+", "+stop+"' data-section='external file'>"+ moment.duration(parseFloat(begin), 'seconds').format("hh:mm:ss.SSS")+" to "+moment.duration(parseFloat(stop), 'seconds').format("hh:mm:ss.SSS")+"</option>");
+					  			$("#intervalCount").text($('#intervalList option').length);
 					  		}
 					  		if (jObjInt[el].hasOwnProperty('annotations')){
 					  			keys = Object.keys(jObjInt[el].annotations);
@@ -737,6 +744,7 @@
 
 					  	}
 						intervalList.reload();
+						$("#intervalCount").text($('#intervalList option').length);
 						regions = jObjInt;
 						chart.regions(regions);	
 
