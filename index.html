@@ -7,12 +7,14 @@
     <meta name="description" content="${2}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/normalize.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link rel="stylesheet" href="css/leaflet.timedimension.control.min.css">
     <link rel="shortcut icon" type="image/png" href="css/favicon.ico"/>
     <script src="js/modernizr.min.js"></script>
     <script src="js/plotly-latest.min.js"></script>
     <script src="js/jquery-1.12.4.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
     <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.12.4.min.js"><\/script>')</script>
     <link href="css/c3.css" rel="stylesheet">
     <script src="js/d3.js"></script>
@@ -65,7 +67,7 @@
 		</div>
 		<div class="col-sm-4">
 			<br />
-			<p class="small" style="text-align: right;">Version 1.7 - Credits: <a href="http://www.dimstudio.org" target="_blank">Daniele Di Mitri</a> - Open Universiteit (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>)</p>
+			<p class="small" style="text-align: right;">Version 1.8 - Credits: <a href="http://www.dimstudio.org" target="_blank">Daniele Di Mitri</a> - Open Universiteit (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>)</p>
 		</div>
 	</div>
 	<div class="row">
@@ -154,6 +156,7 @@
 		  	</div>
 		</div>
 		<div class="col-sm-6" id="theVideo">
+
 		</div>
 	</div>	
 	<div class="row">	
@@ -181,6 +184,9 @@
 	// globalValues 
 	var $result = $("#sessionFileList");
 	var $video;
+	var mymap;
+	var videoIsActive = false;
+	var mapIsActive = false;
 	var attrDict; 
 	var regions;
 	var annObjLen;
@@ -274,6 +280,7 @@
 	function addToAttrDict (json_flat) {
 		json_object = JSON.parse(json_flat);		
 		var applicationName = json_object.getProp("applicationName");
+		var recordingID = json_object.getProp("recordingID");
 		var attr;
 		var parts;
 		var data_section = "";
@@ -287,13 +294,11 @@
 						}
 						tempAttrDict[j][json_object.getProp("frames")[i].getProp("frameStamp").substring(0,12)] = json_object.getProp("frames")[i].getProp("frameAttributes")[j];
 					}	
-			}
+				}
 			}
 		} else if (json_object.getProp("intervals")) {
-			
 			jObjInt = json_object.getProp("intervals");
 		    for (el in jObjInt){
-
 		  		jObjInt[el].class = 'rated';
 		  		jObjInt[el].axis = 'x';
 		  		if (jObjInt[el].hasOwnProperty('start') && jObjInt[el].hasOwnProperty('end')){
@@ -347,10 +352,88 @@
 			if (getMax(attrDict[i])> annObjLen){
 				annObjLen = getMax(attrDict[i]);
 			}
+		}
 
+		// in case this Application contains 'GPS' means it is a map
+		if( applicationName.indexOf('GPS') >= 0){
+			mapIsActive = true;
+			replaceVideoWithMap(tempAttrDict,recordingID);
 		}
 
 	}
+
+
+	function replaceVideoWithMap(dict,recordingID){
+		// Convert MLT-JSON into GeoJSON 
+		keyLat = Object.keys(dict)[0];
+		keyLon = Object.keys(dict)[1];
+		times = Object.keys(dict[keyLat]);
+		times = times.map(s => moment(recordingID,'YYYY-MM-DD-HH[H]mm[M]ss[S]SSS').add(moment.duration(s)).toISOString());
+		properties = {"name":recordingID,"times":times}
+		latitudes = Object.values(dict[keyLat]);
+		longitudes = Object.values(dict[keyLon]);
+		coordinates = zip(latitudes,longitudes);
+		geometry = {"type":"LineString","coordinates":coordinates}
+		geoJSONObj = {"type":"Feature","properties":properties,"geometry":geometry}
+
+		// Replace the video file with LeafLet map
+	  	$("#theVideo").html('<div class="panel panel-default"><div class="panel-heading panel-footer"><h3 class="panel-title ">Map</h3></div><div class="panel-body" id="theMap"></div></div>');
+	  	$("#theMap").css({'height':'400px'});
+		mymap = L.map('theMap',{
+		    zoom: 15,
+		    center: [latitudes[0], longitudes[0]],
+		    timeDimension: true,
+		    timeDimensionOptions: {
+		        timeInterval: times[0]+"/"+times[times.length - 1],
+		        period: "PT1S"
+		    },
+		    timeDimensionControl: true,
+		});
+		// Add metadata of Leaflet
+		L.tileLayer(
+			'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZGltc3R1ZGlvIiwiYSI6ImNrN2xyaThwNDAydXYzbHAzbHMyajZlZTUifQ.favWAVYnUbCg7W5UJL8I1A', {
+			attribution: 'Map data',
+		    maxZoom: 18,
+		    id: 'mapbox/streets-v11',
+		    tileSize: 512,
+		    zoomOffset: -1,
+		    accessToken: 'pk.eyJ1IjoiZGltc3R1ZGlvIiwiYSI6ImNrN2xyaThwNDAydXYzbHAzbHMyajZlZTUifQ.favWAVYnUbCg7W5UJL8I1A'
+		}).addTo(mymap);
+		// Add coordinates
+		addGeoJSONLayer(mymap, geoJSONObj);
+	}	
+
+
+	function addGeoJSONLayer(map, data) {
+	    var icon = L.icon({
+	        iconUrl: 'images/marker.png',
+	        iconSize: [22, 22],
+	        iconAnchor: [11, 11]
+	    });
+
+	    var geoJSONLayer = L.geoJSON(data, {
+	        pointToLayer: function (feature, latLng) {
+	            if (feature.properties.hasOwnProperty('last')) {
+	                return new L.Marker(latLng, {
+	                    icon: icon
+	                });
+	            }
+	            return L.circleMarker(latLng);
+	        }
+	    });
+
+	    var geoJSONTDLayer = L.timeDimension.layer.geoJson(geoJSONLayer, {
+	        updateTimeDimension: true,
+	        duration: 'PT2M',
+	        updateTimeDimensionMode: 'replace',
+	        addlastPoint: true
+	    });
+
+	    geoJSONLayer.addTo(map);
+	    geoJSONTDLayer.addTo(map);
+	}
+	
+
 
 	
 	function treeOnChange(allSelectedItems, addedItems, removedItems) {
@@ -415,7 +498,12 @@
 				xFormat: '%S.%L',//'%H:%M:%S.%L'	,
 				columns: columns,
 				onclick: function (id) {
-					$("#theVideo video")[0].currentTime=id.x;
+					if(videoIsActive){
+						$("#theVideo video")[0].currentTime=id.x;
+					}
+					if(mapIsActive){
+						mymap.setCurrentTime = id.x;
+					}
 				}
 			},
 			subchart: {
@@ -856,6 +944,17 @@
 	  return message;
 	};
 
+	// zipping two lists together
+	function zip() {
+	    var args = [].slice.call(arguments);
+	    var shortest = args.length==0 ? [] : args.reduce(function(a,b){
+	        return a.length<b.length ? a : b
+	    });
+
+	    return shortest.map(function(_,i){
+	        return args.map(function(array){return array[i]})
+	    });
+	}
 
 	// Case unsensentive setters and getters
 	//https://stackoverflow.com/questions/12484386/access-javascript-property-case-insensitively
@@ -901,4 +1000,7 @@
 
   </script>
   <script type="text/javascript" src="js/counter.js"></script>
+  <script type="text/javascript" src="js/leaflet.js"></script>
+  <script type="text/javascript" src="js/iso8601.min.js"></script>
+  <script type="text/javascript" src="js/leaflet.timedimension.min.js"></script>
 </html>
