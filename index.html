@@ -355,7 +355,7 @@
 		}
 
 		// in case this Application contains 'GPS' means it is a map
-		if( applicationName.indexOf('GPS') >= 0){
+		if( applicationName.indexOf('GPS') >= 0 || applicationName.indexOf('gps') >= 0){
 			mapIsActive = true;
 			replaceVideoWithMap(tempAttrDict,recordingID);
 		}
@@ -365,8 +365,8 @@
 
 	function replaceVideoWithMap(dict,recordingID){
 		// Convert MLT-JSON into GeoJSON 
-		keyLat = Object.keys(dict)[0];
-		keyLon = Object.keys(dict)[1];
+		keyLat = Object.keys(dict)[1];
+		keyLon = Object.keys(dict)[0];
 		times = Object.keys(dict[keyLat]);
 		times = times.map(s => moment(recordingID,'YYYY-MM-DD-HH[H]mm[M]ss[S]SSS').add(moment.duration(s)).toISOString());
 		properties = {"name":recordingID,"times":times}
@@ -381,7 +381,7 @@
 	  	$("#theMap").css({'height':'400px'});
 		mymap = L.map('theMap',{
 		    zoom: 15,
-		    center: [latitudes[0], longitudes[0]],
+		    center: [longitudes[0], latitudes[0]],
 		    timeDimension: true,
 		    timeDimensionOptions: {
 		        timeInterval: times[0]+"/"+times[times.length - 1],
