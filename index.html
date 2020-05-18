@@ -368,7 +368,7 @@
 		keyLat = Object.keys(dict)[1];
 		keyLon = Object.keys(dict)[0];
 		times = Object.keys(dict[keyLat]);
-		times = times.map(s => moment(recordingID,'YYYY-MM-DD-HH[H]mm[M]ss[S]SSS').add(moment.duration(s)).toISOString());
+		times = times.map(s => moment(recordingID,'YYYY-MM-DD[T]HH-mm-ss[.]SSS').add(moment.duration(s)).toISOString());
 		properties = {"name":recordingID,"times":times}
 		latitudes = Object.values(dict[keyLat]);
 		longitudes = Object.values(dict[keyLon]);
@@ -448,17 +448,22 @@
 		for (i in allSelectedItems){
 			attr = allSelectedItems[i].value;
 			if (sum(attrDict[attr])!=0 && !isNaN(sum(attrDict[attr]))){ 
+				var cols = [];
 				if (normalize){
 					arr = Object.keys(attrDict[attr]).map(function (k) { return attrDict[attr][k]; });
 					xMin = Math.min.apply( null, arr );
 					xMax = Math.max.apply( null, arr );
-					cols = $.map(attrDict[attr], function (value, key) { return (2*(value - xMin)/ (xMax - xMin))-1 });
+					$.each( attrDict[attr], function( key, value ) {cols.push((2*(value - xMin)/ (xMax - xMin))-1);});
+					//cols = $.map(attrDict[attr], function (value, key) { return (2*(value - xMin)/ (xMax - xMin))-1 });
 				} else {
-					cols = $.map(attrDict[attr], function (value, key) { return value });
+					$.each( attrDict[attr], function( key, value ) {cols.push(value);});
+					//cols = $.map(attrDict[attr], function (value, key) { return value });
 				}
 				cols.unshift(attr);
-				attrDict[attr]
-				rows = $.map(attrDict[attr], function (value, key) { return moment.duration(key).asSeconds()});
+				attrDict[attr];
+				var rows = [];
+				$.each( attrDict[attr], function( key, value ) {rows.push(moment.duration(key).asSeconds());});
+				//rows = $.map(attrDict[attr], function (value, key) { return moment.duration(key).asSeconds()});
 				max = moment.duration(Object.keys(attrDict[attr])[Object.keys(attrDict[attr]).length - 1]).asSeconds()
 				if (max > keyMax) {
 					keyMax = max;
@@ -903,7 +908,7 @@
 
 	// Get the max key of a dicotionary
 	function getMax(obj) {
-	  return Math.max.apply(null,(Object.keys(obj).map(toDurationS)));
+	  return Math.max.apply(null,(Object.keys(obj).forEach(toDurationS)));
 	}
 	
 	// merge 2 lists into dictionary
