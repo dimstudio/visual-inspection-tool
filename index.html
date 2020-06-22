@@ -192,6 +192,7 @@
 	var annObjLen;
 	var annTf = 0.5; // annotatoom timeframe
 	var sessionName; 
+	var zerotime;
 
 	$("#sessionFile").on("change", function (evt) {
 		// remove content
@@ -211,6 +212,7 @@
 		regions = [];
 		var chart;
 		annObjLen = 0;
+		zerotime = 0;
 
 		// be sure to show the results
 		$("#result_block").removeClass("hidden").addClass("show");
@@ -369,6 +371,7 @@
 		keyLon = Object.keys(dict)[0];
 		times = Object.keys(dict[keyLat]);
 		times = times.map(s => moment(recordingID,'YYYY-MM-DD[T]HH-mm-ss[.]SSS').add(moment.duration(s)).toISOString());
+		zerotime = moment(recordingID,'YYYY-MM-DD[T]HH-mm-ss[.]SSS');
 		properties = {"name":recordingID,"times":times}
 		latitudes = Object.values(dict[keyLat]);
 		longitudes = Object.values(dict[keyLon]);
@@ -388,6 +391,7 @@
 		        period: "PT1S"
 		    },
 		    timeDimensionControl: true,
+		    timeDimensionControlOptions :{timeZones: ["Local"]}
 		});
 		// Add metadata of Leaflet
 		L.tileLayer(
@@ -397,10 +401,12 @@
 		    id: 'mapbox/streets-v11',
 		    tileSize: 512,
 		    zoomOffset: -1,
+
 		    accessToken: 'pk.eyJ1IjoiZGltc3R1ZGlvIiwiYSI6ImNrN2xyaThwNDAydXYzbHAzbHMyajZlZTUifQ.favWAVYnUbCg7W5UJL8I1A'
 		}).addTo(mymap);
 		// Add coordinates
 		addGeoJSONLayer(mymap, geoJSONObj);
+		mymap
 	}	
 
 
@@ -431,6 +437,16 @@
 
 	    geoJSONLayer.addTo(map);
 	    geoJSONTDLayer.addTo(map);
+	    // Fit the bounds of the map to the itinerary
+	    map.fitBounds(geoJSONLayer.getBounds());
+	    // Update the marker 
+	    map.timeDimension.on('timeload', function(data) {
+        	//console.log((data.time-zerotime)/1000);
+        	chart.xgrids([{
+					value: (data.time-zerotime)/1000,
+					class: 'currentTime'
+			}]);
+    	});
 	}
 	
 
@@ -507,7 +523,7 @@
 						$("#theVideo video")[0].currentTime=id.x;
 					}
 					if(mapIsActive){
-						mymap.setCurrentTime = id.x;
+						mymap.timeDimension.setCurrentTime(zerotime+(id.x*1000));
 					}
 				}
 			},
@@ -706,7 +722,6 @@
 		$("input[name='inputKeyList']").each(function() { inputKeys.push($(this).val()); });
 		$("input[name='inputValueList']").each(function() { 
 			if ($(this).val()=="" && $(this).attr("placeholder")=="?") { 
-			//@TODO seems to work
 				inputValues.push(null); 
 			} else {
 				inputValues.push($(this).val()); 
