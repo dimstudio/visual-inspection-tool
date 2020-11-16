@@ -25,7 +25,7 @@ Copyright information: (CC BY-SA 4.0) https://creativecommons.org/licenses/by-sa
 
 
 ## 4. Contact and support
-In case of questions you can email daniele@dismtudio.org
+In case of questions you can email daniele@dimstudio.org
 
 ## 5. Screenshot
 ![alt text](https://i.imgur.com/btNVACK.png "Screenshot")
