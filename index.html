@@ -67,7 +67,7 @@
 		</div>
 		<div class="col-sm-4">
 			<br />
-			<p class="small" style="text-align: right;">Version 1.8 - Credits: <a href="http://www.dimstudio.org" target="_blank">Daniele Di Mitri</a> - Open Universiteit (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>)</p>
+			<p class="small" style="text-align: right;">Version 1.9 - Credits: <a href="http://www.dimstudio.org" target="_blank">Daniele Di Mitri</a> (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>)</p>
 		</div>
 	</div>
 	<div class="row">
@@ -193,6 +193,7 @@
 	var annTf = 0.5; // annotatoom timeframe
 	var sessionName; 
 	var zerotime;
+	var transcriptTexts;
 
 	$("#sessionFile").on("change", function (evt) {
 		// remove content
@@ -208,11 +209,13 @@
 		$("a#dwnJSONAnnotations").attr("href","");
 		$("#theVideo video").remove();
 		$("#theVideo").html("<video style='width:100%;' controls=''></video>");
+		$("#keyValuePairList").html("");
 		$video = $("#theVideo video");
 		regions = [];
 		var chart;
 		annObjLen = 0;
 		zerotime = 0;
+		transcriptTexts = [];
 
 		// be sure to show the results
 		$("#result_block").removeClass("hidden").addClass("show");
@@ -286,7 +289,8 @@
 		var attr;
 		var parts;
 		var data_section = "";
-		tempAttrDict = {}
+		tempAttrDict = {};
+
 		if (json_object.getProp("frames")) {
 			for (i in json_object.getProp("frames")) {
 				if (json_object.getProp("frames")[i]){
@@ -299,17 +303,16 @@
 				}
 			}
 		} else if (json_object.getProp("intervals")) {
-			jObjInt = json_object.getProp("intervals");
+			jObjInt = json_object.getProp("intervals"); 
 		    for (el in jObjInt){
 		  		jObjInt[el].class = 'rated';
 		  		jObjInt[el].axis = 'x';
 		  		if (jObjInt[el].hasOwnProperty('start') && jObjInt[el].hasOwnProperty('end')){
-
 		  			begin = (parseFloat(moment.duration(jObjInt[el].start.substring(0,12)).asSeconds())).toFixed(2).toString();
 		  			jObjInt[el].start = begin;
 		  			stop = (parseFloat(moment.duration(jObjInt[el].end.substring(0,12)).asSeconds())).toFixed(2).toString();
 		  			jObjInt[el].end = stop;
-		  			$("#intervalList").append("<option value='"+begin+", "+stop+"' data-section='saved internally'>"+ moment.duration(parseFloat(begin), 'seconds').format("hh:mm:ss.SSS")+" to "+moment.duration(parseFloat(stop), 'seconds').format("hh:mm:ss.SSS")+"</option>");
+		  			$("#intervalList").append("<option value='"+begin+", "+stop+"' data-section='"+applicationName+"'>"+ moment.duration(parseFloat(begin), 'seconds').format("hh:mm:ss.SSS")+" to "+moment.duration(parseFloat(stop), 'seconds').format("hh:mm:ss.SSS")+"</option>");
 		  		}
 		  		if (jObjInt[el].hasOwnProperty('annotations')){
 		  			keys = Object.keys(jObjInt[el].annotations);
@@ -326,9 +329,22 @@
 		  	}
 		  	intervalList.reload();
 		  	$("#intervalCount").text($('#intervalList option').length);
-		  	regions = jObjInt;
+		  	regions = regions.concat(jObjInt);
 			chart.regions(regions);	
+			if(applicationName=='PresentableFeedback'){
+
+			}
 			
+		} else if (json_object.getProp("segments")) {
+			console.log("found segment");
+			for (j in json_object.getProp("segments")){
+				tLine = {};
+				if (json_object.getProp("segments")[j].hasOwnProperty('start')&&json_object.getProp("segments")[j].hasOwnProperty('start')) {
+					tLine.xVal = json_object.getProp("segments")[j].start;
+					tLine.label = json_object.getProp("segments")[j].text;
+					transcriptTexts.push(tLine);
+				}			
+			}
 		}
 
 		for (i in Object.keys(tempAttrDict)){
@@ -357,11 +373,12 @@
 		}
 
 		// in case this Application contains 'GPS' means it is a map
-		if( applicationName.indexOf('GPS') >= 0 || applicationName.indexOf('gps') >= 0){
-			mapIsActive = true;
-			replaceVideoWithMap(tempAttrDict,recordingID);
+		if (applicationName !== undefined && applicationName !== null) {
+			if( applicationName.indexOf('GPS') >= 0 || applicationName.indexOf('gps') >= 0){
+				mapIsActive = true;
+				replaceVideoWithMap(tempAttrDict,recordingID);
+			}
 		}
-
 	}
 
 
@@ -395,13 +412,14 @@
 		});
 		// Add metadata of Leaflet
 		L.tileLayer(
-			'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=XXX', {
+			'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZGltc3R1ZGlvIiwiYSI6ImNrN2xyaThwNDAydXYzbHAzbHMyajZlZTUifQ.favWAVYnUbCg7W5UJL8I1A', {
 			attribution: 'Map data',
 		    maxZoom: 18,
 		    id: 'mapbox/streets-v11',
 		    tileSize: 512,
 		    zoomOffset: -1,
-		    accessToken: 'XXX'
+
+		    accessToken: 'pk.eyJ1IjoiZGltc3R1ZGlvIiwiYSI6ImNrN2xyaThwNDAydXYzbHAzbHMyajZlZTUifQ.favWAVYnUbCg7W5UJL8I1A'
 		}).addTo(mymap);
 		// Add coordinates
 		addGeoJSONLayer(mymap, geoJSONObj);
@@ -577,7 +595,95 @@
 			            return attrDict[id][Object.keys(attrDict[id])[index]];
 			        }
 		        }
-		    }
+		    },
+		    onrendered: function () {
+			  var chartInternal = this;
+			  if (chartInternal && transcriptTexts && !$.isEmptyObject(xs)) {
+
+			    const svg = d3.select('#plotGraph svg');
+			    svg.selectAll('.transcript-text').remove();
+			    svg.selectAll('.transcript-line').remove();
+			    svg.selectAll('.transcript-rect').remove();
+
+			    //const fixedY = 10; // fixed Y position above chart area
+			    var baseY = 20;
+				const verticalSpacing = 15;
+				var placedLabels = [];
+
+			    // Array of points where text should appear, with labels
+			    const texts = transcriptTexts;
+			    texts.forEach(function(segment) {
+
+			   	  var xPos = chartInternal.x(parseFloat(segment.xVal));
+				  var textContent = segment.label.trim();
+
+				  // Create temporary text element off-screen to measure width
+				  var tempText = svg.append('text')
+				                    .attr('x', -9999)
+				                    .attr('y', -9999)
+				                    .text(textContent)
+				                    .style('font-size', '12px');
+
+				  var bbox = tempText.node().getBBox();
+				  var textWidth = bbox.width;
+				  var textHeight = bbox.height;
+				  tempText.remove();
+
+				  // Find first row where label doesn't overlap others
+				  var row = 0;
+				  while (true) {
+				    var overlap = placedLabels.some(function(label) {
+				      if (label.row !== row) return false;
+				      var labelStart = label.x - label.width / 2;
+				      var labelEnd = label.x + label.width / 2;
+				      var thisStart = xPos - textWidth / 2;
+				      var thisEnd = xPos + textWidth / 2;
+				      return !(thisEnd < labelStart || thisStart > labelEnd);
+				    });
+				    if (overlap) row++;
+				    else break;
+				  }
+				  placedLabels.push({ x: xPos, width: textWidth, row: row });
+
+				  var rectX = xPos - 4;    // background rect left, 4px padding
+				  var rectY = baseY + row * verticalSpacing - textHeight + 3; // vertical align rect to text baseline
+				  var rectWidth = textWidth + 8;           // padding left/right 4px
+				  var rectHeight = textHeight + 4;         // padding top/bottom 2px
+
+				   // Append background rect
+				  svg.append('rect')
+				     .attr('class', 'transcript-rect')
+				     .attr('x', rectX)
+				     .attr('y', rectY)
+				     .attr('width', rectWidth)
+				     .attr('height', rectHeight)
+				     .attr('fill', 'white')
+				     .attr('rx', 2)    // optional corner radius
+				     .attr('ry', 2);
+
+				  // Append red border line on left of rect
+				  svg.append('line')
+				  	 .attr('class', 'transcript-line')
+				     .attr('x1', rectX)
+				     .attr('y1', rectY)
+				     .attr('x2', rectX)
+				     .attr('y2', rectY + rectHeight)
+				     .attr('stroke', 'red')
+				     .attr('stroke-width', 2);
+
+				  // Append the actual text
+				  svg.append('text')
+				     .attr('class', 'transcript-text')
+				     .attr('x', xPos)
+				     .attr('y', baseY + row * verticalSpacing)
+				     .attr('text-anchor', 'start')
+				     .text(textContent)
+				     .style('font-size', '12px')
+				     .style('fill', 'black');
+				});
+			  }
+			}
+
 
 		});
 		chart.regions(regions);
